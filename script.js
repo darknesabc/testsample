@@ -3,12 +3,22 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
     const name = document.getElementById('name').value.trim();
     const number = document.getElementById('number').value.trim();
+    const userType = document.querySelector('input[name="userType"]:checked').value; // 선택된 로그인 유형
 
-    // 간단한 유효성 검사
-    if (name && /^[0-9]{4}$/.test(number)) {
-        // 로그인 성공 시
+    // 마스터 계정 정보
+    const masterAccount = {
+        name: "admin",
+        number: "1234"
+    };
+
+    // 로그인 처리
+    if (userType === "admin" && name === masterAccount.name && number === masterAccount.number) {
+        // 관리자 로그인 성공 시
+        window.location.href = 'admin-dashboard.html'; // 관리자 대시보드로 이동
+    } else if (userType === "student" && name && /^[0-9]{4}$/.test(number)) {
+        // 학생 로그인 성공 시
         localStorage.setItem('studentName', name); // 이름 저장
-        window.location.href = 'dashboard.html'; // 다음 페이지로 이동
+        window.location.href = 'student-dashboard.html'; // 학생 대시보드로 이동
     } else {
         // 로그인 실패 시
         document.getElementById('error').innerText = '유효한 정보를 입력하세요.';
