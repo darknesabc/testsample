@@ -10,9 +10,16 @@
     <div class="container">
         <h1>학생 관리 페이지</h1>
         <form id="loginForm">
-            <label for="name">이름</label>
+            <label for="userType">로그인 유형:</label>
+            <div>
+                <input type="radio" id="student" name="userType" value="student" checked>
+                <label for="student">학생</label>
+                <input type="radio" id="admin" name="userType" value="admin">
+                <label for="admin">관리자</label>
+            </div>
+            <label for="name">이름:</label>
             <input type="text" id="name" required>
-            <label for="number">4자리 번호</label>
+            <label for="number">4자리 번호:</label>
             <input type="text" id="number" maxlength="4" required pattern="\d{4}">
             <button type="submit">로그인</button>
         </form>
