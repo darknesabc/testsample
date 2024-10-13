@@ -16,7 +16,7 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 90%;
-    max-width: 400px; /* 최대 너비 설정 */
+    max-width: 400px;
 }
 
 h1 {
@@ -30,7 +30,7 @@ label {
 }
 
 input {
-    width: 100%;
+    width: calc(100% - 20px); /* 입력 필드 너비를 줄임 */
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
@@ -73,6 +73,7 @@ button:hover {
 
     input {
         padding: 8px; /* 입력 필드 패딩 조정 */
+        width: calc(100% - 16px); /* 모바일 입력 필드 너비 조정 */
     }
 }
 
@@ -91,5 +92,6 @@ button:hover {
 
     input {
         padding: 7px; /* 모바일 입력 필드 패딩 조정 */
+        width: calc(100% - 14px); /* 모바일 입력 필드 너비 조정 */
     }
 }
