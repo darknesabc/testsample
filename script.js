@@ -15,7 +15,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY/values/명렬!A:N?key=AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk`);
         const data = await response.json();
 
-        // 여기에서 API로부터 받은 데이터 구조를 출력합니다.
         console.log(data); // 데이터 확인
 
         const rows = data.values || [];
@@ -35,6 +34,22 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             // 이름과 오른쪽 4자리 번호 비교
             if (sheetName === name && rightmostFourDigits === number) {
                 matched = true;
+
+                // 매칭된 학생 정보를 저장
+                localStorage.setItem('studentName', name);
+                localStorage.setItem('studentNumber', rightmostFourDigits);
+                
+                // 학생의 추가 정보도 저장
+                localStorage.setItem('studentSeatNumber', row[0]); // A열 자리번호
+                localStorage.setItem('teacher', row[1]); // B열 담임
+                localStorage.setItem('studentGrade', row[7]); // H열 학년
+                localStorage.setItem('studentID', row[3]); // D열 학번
+                localStorage.setItem('studentClass', row[4]); // E열 반
+                localStorage.setItem('studentGender', row[5]); // F열 성별
+                localStorage.setItem('studentSchool', row[6]); // G열 학교
+                localStorage.setItem('studentContact', row[12]); // M열 학생연락처
+                localStorage.setItem('parentContact', row[13]); // N열 학부모연락처
+
                 break;
             }
         }
