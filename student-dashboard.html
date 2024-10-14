@@ -8,6 +8,9 @@
         /* 기본 스타일 */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         header {
             display: flex;
@@ -15,10 +18,12 @@
             align-items: center;
             background-color: #f0f0f0;
             padding: 10px;
+            flex-wrap: wrap;
         }
         nav {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
         nav a {
             text-decoration: none;
@@ -28,6 +33,7 @@
         #student-info {
             display: flex;
             gap: 10px;
+            align-items: center;
         }
         #logout-btn {
             background-color: #ff4d4d;
@@ -40,6 +46,42 @@
         #welcome {
             font-size: 24px;
             margin: 20px 0;
+        }
+
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #student-info {
+                margin-top: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #welcome {
+                font-size: 20px;
+            }
+            #logout-btn {
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #welcome {
+                font-size: 18px;
+            }
+            #logout-btn {
+                padding: 6px 10px;
+            }
+            nav a {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
