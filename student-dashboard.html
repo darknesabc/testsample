@@ -32,7 +32,7 @@
         }
         #student-info {
             display: flex;
-            gap: 5px; /* 간격을 좁힘 */
+            gap: 5px;
             align-items: center;
             white-space: nowrap;
         }
@@ -51,9 +51,9 @@
 
         /* 세로 줄 스타일 */
         .separator {
-            border-left: 1px solid #333; /* 세로 줄의 두께를 얇게 수정 */
-            height: 20px; /* 세로 줄의 높이 */
-            margin: 0 5px; /* 줄의 양옆 여백을 좁힘 */
+            border-left: 1px solid #333;
+            height: 20px;
+            margin: 0 5px;
         }
 
         /* 드롭다운 메뉴 스타일 */
@@ -73,6 +73,7 @@
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
+            text-align: center;
         }
 
         /* 햄버거 아이콘 */
@@ -114,20 +115,24 @@
             .hamburger {
                 display: flex;
             }
+            #mobile-menu {
+                display: flex; /* 햄버거 메뉴 클릭 시 보이도록 수정 */
+            }
+            #content > div {
+                padding: 10px; /* 콘텐츠 여백을 줄임 */
+                font-size: 0.9rem; /* 글자 크기를 작게 조정 */
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 상단 메뉴 및 학생 정보 -->
     <header>
-        <!-- 햄버거 메뉴 아이콘 -->
         <div class="hamburger" id="hamburger">
             <div></div>
             <div></div>
             <div></div>
         </div>
 
-        <!-- 메뉴 -->
         <nav>
             <a href="#menu1">메뉴1</a>
             <a href="#menu2">메뉴2</a>
@@ -137,7 +142,6 @@
             <a href="#menu6">메뉴6</a>
         </nav>
 
-        <!-- 모바일 드롭다운 메뉴 -->
         <div id="mobile-menu">
             <a href="#menu1">메뉴1</a>
             <a href="#menu2">메뉴2</a>
@@ -147,75 +151,64 @@
             <a href="#menu6">메뉴6</a>
         </div>
 
-        <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
             <span id="seatNameDisplay"></span>
-            <div class="separator"></div> <!-- 자리번호와 이름 사이의 세로 줄 -->
-            <span id="nameDisplay"></span> <!-- 이름 표시 -->
-            <div class="separator"></div> <!-- 이름과 학년 사이의 세로 줄 -->
-            <span id="gradeDisplay"></span> <!-- 학년 표시 추가 -->
+            <div class="separator"></div>
+            <span id="nameDisplay"></span>
+            <div class="separator"></div>
+            <span id="gradeDisplay"></span>
             <button id="logout-btn">로그아웃</button>
         </div>
     </header>
 
-    <!-- 환영 메시지 -->
     <h1>학생 대시보드</h1>
     <p id="welcome"></p>
 
-    <!-- 탭 -->
     <div class="tabs">
         <div class="tab active" id="tab-notice">공지사항</div>
         <div class="tab" id="tab-timetable">정규시간표</div>
         <div class="tab" id="tab-grades">교육점수표</div>
     </div>
 
-    <!-- 콘텐츠 영역 -->
     <div id="content">
-        <div id="notice-content"> <!-- 공지사항 내용 -->
+        <div id="notice-content">
             <p>공지사항 내용이 여기에 표시됩니다.</p>
         </div>
-        <div id="timetable-content" style="display:none;"> <!-- 정규시간표 내용 -->
+        <div id="timetable-content" style="display:none;">
             <img src="timetable_image.png" alt="정규시간표" style="width:100%; height:auto;">
         </div>
-        <div id="grades-content" style="display:none;"> <!-- 교육점수표 내용 -->
+        <div id="grades-content" style="display:none;">
             <img src="grades_image.png" alt="교육점수표" style="width:100%; height:auto;">
         </div>
     </div>
 
     <script>
-        // 로컬스토리지에서 학생 정보 불러오기
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
-        const studentGrade = localStorage.getItem('studentGrade'); // 학년 정보 추가
-        
-        // 학생 이름으로 환영 메시지 표시
+        const studentGrade = localStorage.getItem('studentGrade');
+
         if (studentName) {
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
-            // 학생 자리번호 및 이름 표시
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
-            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`; // 이름 표시
-            // 학년 정보 표시
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
-            window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
+            window.location.href = 'index.html';
         }
 
-        // 구글 시트에서 공지사항 내용 불러오기
         async function loadNotices() {
-            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY'; // 구글 시트 ID
-            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // API 키
+            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
+            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/공지사항?key=${apiKey}`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 const notices = data.values;
-
-                // 학년 정보로 필터링하여 공지사항 표시
-                const matchingNotices = notices.filter(row => row[0] === studentGrade); // A열: 학년, B열: 내용
+                const matchingNotices = notices.filter(row => row[0] === studentGrade);
 
                 if (matchingNotices.length > 0) {
-                    const noticeContent = matchingNotices.map(row => `<p>${row[1]}</p>`).join(''); // B열의 내용을 표시
+                    const noticeContent = matchingNotices.map(row => `<p>${row[1]}</p>`).join('');
                     document.getElementById('notice-content').innerHTML = noticeContent;
                 } else {
                     document.getElementById('notice-content').innerHTML = '<p>일치하는 공지사항이 없습니다.</p>';
@@ -226,7 +219,6 @@
             }
         }
 
-        // 탭 클릭 이벤트
         const tabs = document.querySelectorAll('.tab');
         const contents = document.querySelectorAll('#content > div');
 
@@ -240,20 +232,27 @@
                 activeContent.style.display = 'block';
 
                 if (tab.id === 'tab-notice') {
-                    loadNotices(); // 공지사항 로드
+                    loadNotices();
                 }
             });
         });
 
-        // 로그아웃 버튼 클릭 이벤트
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('studentName');
             localStorage.removeItem('studentSeatNumber');
-            localStorage.removeItem('studentGrade'); // 학년 정보 제거
-            window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
+            localStorage.removeItem('studentGrade');
+            window.location.href = 'index.html';
         });
 
-        // 기본적으로 공지사항 탭을 로드
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.style.display === 'flex') {
+                mobileMenu.style.display = 'none';
+            } else {
+                mobileMenu.style.display = 'flex';
+            }
+        });
+
         loadNotices();
     </script>
 </body>
