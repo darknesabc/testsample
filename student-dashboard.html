@@ -228,13 +228,13 @@
         }
 
         const tabs = document.querySelectorAll('.tab');
-        const contents = document.querySelectorAll('#content > div');
-
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.style.display = 'none');
-
+                tabs.forEach(t => {
+                    t.classList.remove('active');
+                    const targetContent = document.getElementById(t.id.replace('tab-', '') + '-content');
+                    targetContent.style.display = 'none';
+                });
                 tab.classList.add('active');
                 const targetContent = document.getElementById(tab.id.replace('tab-', '') + '-content');
                 targetContent.style.display = 'block';
