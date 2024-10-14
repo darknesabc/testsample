@@ -125,6 +125,7 @@
         <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
             <span id="seatNameDisplay"></span>
+            <span id="gradeDisplay"></span> <!-- 학년 표시 추가 -->
             <button id="logout-btn">로그아웃</button>
         </div>
     </header>
@@ -137,12 +138,15 @@
         // 로컬스토리지에서 학생 정보 불러오기
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade'); // 학년 정보 추가
         
         // 학생 이름으로 환영 메시지 표시
         if (studentName) {
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
             // 학생 자리번호 및 이름 표시
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber} | 이름: ${studentName}`;
+            // 학년 정보 표시
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
             window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
         }
