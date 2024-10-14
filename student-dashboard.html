@@ -55,7 +55,9 @@
             border: 1px solid #00796b; /* 테두리 색 */
             border-radius: 5px;
             padding: 5px 10px;
-            display: inline-block; /* 박스 형태로 보여줌 */
+            display: flex; /* flex 사용 */
+            flex-direction: column; /* 세로로 나열 */
+            align-items: flex-start; /* 왼쪽 정렬 */
             font-weight: bold; /* 글자 두껍게 */
         }
 
@@ -134,9 +136,11 @@
 
         <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
-            <div class="info-box" id="seatNameDisplay"></div> <!-- 자리번호 박스 -->
-            <div class="info-box" id="nameDisplay"></div> <!-- 이름 박스 -->
-            <div class="info-box" id="gradeDisplay"></div> <!-- 학년 박스 -->
+            <div class="info-box">
+                <span id="seatNameDisplay"></span> <!-- 자리번호 표시 -->
+                <span id="nameDisplay"></span> <!-- 이름 표시 -->
+                <span id="gradeDisplay"></span> <!-- 학년 표시 -->
+            </div>
             <button id="logout-btn">로그아웃</button>
         </div>
     </header>
