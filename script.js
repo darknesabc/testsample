@@ -14,6 +14,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     try {
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY/values/명렬!A:N?key=AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk`);
         const data = await response.json();
+
+        // 여기에서 API로부터 받은 데이터 구조를 출력합니다.
+        console.log(data); // 데이터 확인
+
         const rows = data.values || [];
         
         let matched = false;
@@ -24,7 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             const sheetNumber = row[13]; // 번호 (N열)
 
             // N열의 오른쪽 4자리 확인
-            const rightmostFourDigits = sheetNumber.slice(-4); // N열의 오른쪽 4자리 추출
+            const rightmostFourDigits = sheetNumber ? sheetNumber.toString().slice(-4) : ""; // N열이 정의되지 않았을 경우 방지
 
             console.log(`Checking: ${sheetName} (input: ${name}), ${rightmostFourDigits} (input: ${number})`); // 디버깅 메시지
 
