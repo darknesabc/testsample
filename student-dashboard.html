@@ -182,10 +182,10 @@
             <p>공지사항 내용이 여기에 표시됩니다.</p>
         </div>
         <div id="timetable-content" style="display:none;">
-            <img src="https://drive.google.com/uc?id=1jYNCIM2EyqL8yYN9UmMgTp9YkfGGrDAI" alt="정규시간표" style="width:100%; height:auto;">
+            <img src="timetable_image.png" alt="정규시간표" style="width:100%; height:auto;">
         </div>
         <div id="grades-content" style="display:none;">
-            <img src="https://drive.google.com/uc?id=1r-eNJlY0S6oRKO5A9TGHGoWJhu41Qr97" alt="교육점수표" style="width:100%; height:auto;">
+            <img src="grades_image.png" alt="교육점수표" style="width:100%; height:auto;">
         </div>
     </div>
 
@@ -206,60 +206,59 @@
         async function loadNotices() {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/명렬?key=${apiKey}`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/공지사항?key=${apiKey}`;
 
-            const response = await fetch(url);
-            const data = await response.json();
-            const rows = data.values;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const notices = data.values;
 
-            const grade = studentGrade; // 학년 정보 가져오기
-            const noticeContent = rows.filter(row => row[0] === grade).map(row => `<p>${row[1]}</p>`).join('');
-            document.getElementById('notice-content').innerHTML = noticeContent;
+                const matchingNotices = notices.filter(row => row[0] === studentGrade);
+
+                if (matchingNotices.length > 0) {
+                    const noticeContent = matchingNotices.map(row => `<p>${row[1]}</p>`).join('');
+                    document.getElementById('notice-content').innerHTML = noticeContent;
+                } else {
+                    document.getElementById('notice-content').innerHTML = '<p>일치하는 공지사항이 없습니다.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching notices:', error);
+                document.getElementById('notice-content').innerHTML = '<p>공지사항을 불러오는 데 오류가 발생했습니다.</p>';
+            }
         }
 
-        document.getElementById('tab-notice').addEventListener('click', () => {
-            document.getElementById('notice-content').style.display = 'block';
-            document.getElementById('timetable-content').style.display = 'none';
-            document.getElementById('grades-content').style.display = 'none';
-            loadNotices(); // 공지사항 로드
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('tab-notice').classList.add('active');
-        });
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('#content > div');
 
-        document.getElementById('tab-timetable').addEventListener('click', () => {
-            document.getElementById('notice-content').style.display = 'none';
-            document.getElementById('timetable-content').style.display = 'block';
-            document.getElementById('grades-content').style.display = 'none';
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('tab-timetable').classList.add('active');
-        });
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.style.display = 'none');
 
-        document.getElementById('tab-grades').addEventListener('click', () => {
-            document.getElementById('notice-content').style.display = 'none';
-            document.getElementById('timetable-content').style.display = 'none';
-            document.getElementById('grades-content').style.display = 'block';
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('tab-grades').classList.add('active');
+                tab.classList.add('active');
+                const activeContent = document.getElementById(`${tab.id.replace('tab-', '')}-content`);
+                activeContent.style.display = 'block';
+
+                if (tab.id === 'tab-notice') {
+                    loadNotices();
+                }
+            });
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentSeatNumber');
+            localStorage.removeItem('studentGrade');
             window.location.href = 'index.html';
         });
 
+        // 햄버거 메뉴 클릭 이벤트
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
         });
 
-        window.addEventListener('resize', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (window.innerWidth > 768) {
-                mobileMenu.classList.remove('active'); // PC에서 모바일 메뉴 숨김
-            }
-        });
-
-        // 초기화
+        // 페이지 로드 시 공지사항 불러오기
         loadNotices();
     </script>
 </body>
