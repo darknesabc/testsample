@@ -137,8 +137,7 @@
         <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
             <div class="info-box">
-                <span id="seatNameDisplay"></span> <!-- 자리번호 표시 -->
-                <span id="nameDisplay"></span> <!-- 이름 표시 -->
+                <span id="seatNameDisplay"></span> <!-- 자리번호 및 이름 표시 -->
                 <span id="gradeDisplay"></span> <!-- 학년 표시 -->
             </div>
             <button id="logout-btn">로그아웃</button>
@@ -159,9 +158,7 @@
         if (studentName) {
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
             // 학생 자리번호 및 이름 표시
-            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`; // 자리번호 표시
-            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`; // 이름 표시
-            // 학년 박스에 표시
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber} | 이름: ${studentName}`; // 자리번호와 이름을 한 줄로 표시
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`; // 학년 정보 표시
         } else {
             window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
