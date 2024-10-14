@@ -182,11 +182,11 @@
             <p>공지사항 내용이 여기에 표시됩니다.</p>
         </div>
         <div id="timetable-content" style="display:none;">
-    <img src="https://drive.google.com/uc?export=view&id=1jYNCIM2EyqL8yYN9UmMgTp9YkfGGrDAI" alt="정규시간표" style="width:100%; height:auto;">
-</div>
-<div id="grades-content" style="display:none;">
-    <img src="https://drive.google.com/uc?export=view&id=1r-eNJlY0S6oRKO5A9TGHGoWJhu41Qr97" alt="교육점수표" style="width:100%; height:auto;">
-</div>
+            <img src="https://drive.google.com/uc?export=view&id=1jYNCIM2EyqL8yYN9UmMgTp9YkfGGrDAI" alt="정규시간표" style="max-width:100%; height:auto;">
+        </div>
+        <div id="grades-content" style="display:none;">
+            <img src="https://drive.google.com/uc?export=view&id=1r-eNJlY0S6oRKO5A9TGHGoWJhu41Qr97" alt="교육점수표" style="max-width:100%; height:auto;">
+        </div>
     </div>
 
     <script>
@@ -246,18 +246,16 @@
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentSeatNumber');
-            localStorage.removeItem('studentGrade');
+            localStorage.clear();
             window.location.href = 'index.html';
         });
 
-        // 햄버거 메뉴 클릭 이벤트
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active'); // 메뉴 열기/닫기
+            mobileMenu.classList.toggle('active');
         });
 
+        // 기본으로 공지사항 로드
         loadNotices();
     </script>
 </body>
