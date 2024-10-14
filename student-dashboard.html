@@ -216,8 +216,8 @@
             let notices = '';
 
             rows.forEach(row => {
-                const gradeLevel = row[4]; // E열 (고3 등)
-                const content = row[5]; // F열 (내용)
+                const gradeLevel = row[1]; // A열 (학년)
+                const content = row[2]; // B열 (내용)
                 
                 // 현재 학년과 일치하는 경우에만 내용 추가
                 if (gradeLevel === grade) {
