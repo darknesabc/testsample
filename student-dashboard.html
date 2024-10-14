@@ -182,10 +182,10 @@
             <p>공지사항 내용이 여기에 표시됩니다.</p>
         </div>
         <div id="timetable-content" style="display:none;">
-            <img src="https://drive.google.com/uc?id=1jYNCIM2EyqL8yYN9UmMgTp9YkfGGrDAI" alt="정규시간표" style="max-width:100%; height:auto;">
+            <img src="https://drive.google.com/uc?id=1jYNCIM2EyqL8yYN9UmMgTp9YkfGGrDAI" alt="정규시간표" style="width:100%; height:auto;">
         </div>
         <div id="grades-content" style="display:none;">
-            <img src="https://drive.google.com/uc?id=1r-eNJlY0S6oRKO5A9TGHGoWJhu41Qr97" alt="교육점수표" style="max-width:100%; height:auto;">
+            <img src="https://drive.google.com/uc?id=1r-eNJlY0S6oRKO5A9TGHGoWJhu41Qr97" alt="교육점수표" style="width:100%; height:auto;">
         </div>
     </div>
 
@@ -228,18 +228,17 @@
         }
 
         const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('#content > div');
+
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                tabs.forEach(t => {
-                    t.classList.remove('active');
-                    const targetContent = document.getElementById(t.id.replace('tab-', '') + '-content');
-                    targetContent.style.display = 'none';
-                });
-                tab.classList.add('active');
-                const targetContent = document.getElementById(tab.id.replace('tab-', '') + '-content');
-                targetContent.style.display = 'block';
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.style.display = 'none');
 
-                // 공지사항 로드
+                tab.classList.add('active');
+                const activeContent = document.getElementById(`${tab.id.replace('tab-', '')}-content`);
+                activeContent.style.display = 'block';
+
                 if (tab.id === 'tab-notice') {
                     loadNotices();
                 }
@@ -256,8 +255,12 @@
             mobileMenu.classList.toggle('active');
         });
 
-        // 기본으로 공지사항 로드
-        loadNotices();
+        window.addEventListener('resize', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (window.innerWidth > 768) {
+                mobileMenu.classList.remove('active'); // PC에서 모바일 메뉴 숨김
+            }
+        });
     </script>
 </body>
 </html>
