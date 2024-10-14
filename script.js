@@ -11,7 +11,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
     // Fetch 구글 시트 데이터
     fetch(url)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const rows = data.values; // 시트에서 가져온 데이터
             let matchedData = null;
@@ -36,7 +41,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                             학생연락처: row[12],
                             학부모연락처: row[13],
                         };
-                        break;
+                        break; // 일치하는 데이터가 발견되면 루프 종료
                     }
                 }
             }
@@ -61,11 +66,4 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             errorElement.textContent = '데이터를 가져오는 중 오류가 발생했습니다.';
             errorElement.classList.add('error');
         });
-});
-
-// 로그아웃 버튼 이벤트
-document.getElementById('logoutBtn').addEventListener('click', function() {
-    localStorage.removeItem('userData'); // 데이터 초기화
-    document.getElementById('error').textContent = '로그아웃되었습니다.';
-    document.getElementById('error').classList.remove('error');
 });
