@@ -49,6 +49,13 @@
             margin: 20px 0;
         }
 
+        /* 세로 줄 스타일 */
+        .separator {
+            border-left: 2px solid #333; /* 세로 줄의 두께와 색상 */
+            height: 20px; /* 세로 줄의 높이 */
+            margin: 0 10px; /* 줄의 양옆 여백 */
+        }
+
         /* 드롭다운 메뉴 스타일 */
         #mobile-menu {
             display: none;
@@ -125,6 +132,9 @@
         <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
             <span id="seatNameDisplay"></span>
+            <div class="separator"></div> <!-- 자리번호와 이름 사이의 세로 줄 -->
+            <span id="nameDisplay"></span> <!-- 이름 표시 -->
+            <div class="separator"></div> <!-- 이름과 학년 사이의 세로 줄 -->
             <span id="gradeDisplay"></span> <!-- 학년 표시 추가 -->
             <button id="logout-btn">로그아웃</button>
         </div>
@@ -144,7 +154,8 @@
         if (studentName) {
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
             // 학생 자리번호 및 이름 표시
-            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber} | 이름: ${studentName}`;
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`; // 이름 표시
             // 학년 정보 표시
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
