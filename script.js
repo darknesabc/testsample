@@ -23,8 +23,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
             if (rows) {
                 for (let row of rows) {
-                    // C열과 N열에서 각각 이름과 번호를 확인
-                    if (row[2] === name && row[13] === number) {
+                    // N열의 값에서 오른쪽 4자리 숫자를 추출
+                    const parentContact = row[13]; // N열은 13번째 인덱스
+                    const extractedNumber = parentContact.slice(-4); // 오른쪽 4자리 숫자 추출
+
+                    // C열과 비교하여 로그인 확인
+                    if (row[2] === name && extractedNumber === number) { // C열은 2번째 인덱스
                         matchedData = {
                             자리번호: row[0],
                             담임: row[1],
