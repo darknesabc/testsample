@@ -21,7 +21,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             const rows = data.values; // 시트에서 가져온 데이터
             let matchedData = null;
 
-            if (rows) {
+            // 관리자 로그인 체크
+            if (name === "admin" && number === "1234") {
+                // 관리자 로그인 성공 시 바로 대시보드로 리다이렉트
+                window.location.href = 'admin-dashboard.html'; // 관리자 대시보드로 이동
+                return; // 함수 종료
+            } else if (rows) {
                 for (let row of rows) {
                     // N열의 값에서 오른쪽 4자리 숫자를 추출
                     const parentContact = row[13]; // N열은 13번째 인덱스
