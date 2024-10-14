@@ -49,58 +49,45 @@
             margin: 20px 0;
         }
 
+        /* 드롭다운 메뉴 스타일 */
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        #mobile-menu a {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        /* 햄버거 아이콘 */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+        }
+
         /* 반응형 스타일 */
-        @media (max-width: 1024px) {
-            header {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                align-items: center;
-            }
-            nav {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-
         @media (max-width: 768px) {
-            header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: nowrap;
-            }
             nav {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                white-space: nowrap;
-                gap: 10px;
+                display: none;
             }
-            #student-info {
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                gap: 5px;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-            #student-info {
-                white-space: nowrap;
-                font-size: 14px;
-            }
-            #welcome {
-                font-size: 18px;
-            }
-            #logout-btn {
-                padding: 6px 10px;
+            .hamburger {
+                display: flex;
             }
         }
     </style>
@@ -108,6 +95,13 @@
 <body>
     <!-- 상단 메뉴 및 학생 정보 -->
     <header>
+        <!-- 햄버거 메뉴 아이콘 -->
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
         <!-- 메뉴 -->
         <nav>
             <a href="#menu1">메뉴1</a>
@@ -117,6 +111,16 @@
             <a href="#menu5">메뉴5</a>
             <a href="#menu6">메뉴6</a>
         </nav>
+
+        <!-- 모바일 드롭다운 메뉴 -->
+        <div id="mobile-menu">
+            <a href="#menu1">메뉴1</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </div>
 
         <!-- 학생 정보 및 로그아웃 버튼 -->
         <div id="student-info">
@@ -149,6 +153,16 @@
             localStorage.clear();
             // 로그인 페이지로 리디렉트
             window.location.href = 'index.html';
+        });
+
+        // 드롭다운 메뉴 토글
+        document.getElementById('hamburger').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.style.display === 'flex') {
+                mobileMenu.style.display = 'none';
+            } else {
+                mobileMenu.style.display = 'flex';
+            }
         });
     </script>
 </body>
