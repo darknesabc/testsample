@@ -213,4 +213,54 @@
             const rows = data.values;
 
             const grade = studentGrade; // 학년 정보 가져오기
-            const noticeContent = rows.filter(row => row[0] === grade).map(row => `<p>${
+            const noticeContent = rows.filter(row => row[0] === grade).map(row => `<p>${row[1]}</p>`).join('');
+            document.getElementById('notice-content').innerHTML = noticeContent;
+        }
+
+        document.getElementById('tab-notice').addEventListener('click', () => {
+            document.getElementById('notice-content').style.display = 'block';
+            document.getElementById('timetable-content').style.display = 'none';
+            document.getElementById('grades-content').style.display = 'none';
+            loadNotices(); // 공지사항 로드
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-notice').classList.add('active');
+        });
+
+        document.getElementById('tab-timetable').addEventListener('click', () => {
+            document.getElementById('notice-content').style.display = 'none';
+            document.getElementById('timetable-content').style.display = 'block';
+            document.getElementById('grades-content').style.display = 'none';
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-timetable').classList.add('active');
+        });
+
+        document.getElementById('tab-grades').addEventListener('click', () => {
+            document.getElementById('notice-content').style.display = 'none';
+            document.getElementById('timetable-content').style.display = 'none';
+            document.getElementById('grades-content').style.display = 'block';
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-grades').classList.add('active');
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        window.addEventListener('resize', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (window.innerWidth > 768) {
+                mobileMenu.classList.remove('active'); // PC에서 모바일 메뉴 숨김
+            }
+        });
+
+        // 초기화
+        loadNotices();
+    </script>
+</body>
+</html>
