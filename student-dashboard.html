@@ -19,6 +19,7 @@
             background-color: #f0f0f0;
             padding: 10px;
             flex-wrap: wrap;
+            position: relative; /* 햄버거 메뉴 위치 조정 */
         }
         nav {
             display: flex;
@@ -48,15 +49,11 @@
             font-size: 24px;
             margin: 20px 0;
         }
-
-        /* 세로 줄 스타일 */
         .separator {
             border-left: 1px solid #333;
             height: 20px;
             margin: 0 5px;
         }
-
-        /* 드롭다운 메뉴 스타일 */
         #mobile-menu {
             display: none;
             flex-direction: column;
@@ -68,15 +65,15 @@
             left: 0;
             right: 0;
             z-index: 10;
+            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
+            border-radius: 5px; /* 메뉴 모서리 둥글게 */
         }
         #mobile-menu a {
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
-            text-align: center;
+            text-align: center; /* 가운데 정렬 */
         }
-
-        /* 햄버거 아이콘 */
         .hamburger {
             display: none;
             flex-direction: column;
@@ -88,8 +85,6 @@
             height: 3px;
             background-color: #333;
         }
-
-        /* 탭 스타일 */
         .tabs {
             display: flex;
             justify-content: space-around;
@@ -106,21 +101,33 @@
         .active {
             background-color: #ddd;
         }
+        #content {
+            padding: 10px; /* 콘텐츠 패딩 추가 */
+        }
+        #notice-content p {
+            margin: 0; /* 공지사항 내용 여백 제거 */
+            padding: 5px 0; /* 패딩 추가 */
+        }
 
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
-                display: none;
+                display: none; /* PC에서는 숨김 */
             }
             .hamburger {
-                display: flex;
+                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
             }
             #mobile-menu {
-                display: flex; /* 햄버거 메뉴 클릭 시 보이도록 수정 */
+                display: none; /* 모바일 메뉴 기본적으로 숨김 */
             }
-            #content > div {
-                padding: 10px; /* 콘텐츠 여백을 줄임 */
-                font-size: 0.9rem; /* 글자 크기를 작게 조정 */
+            #mobile-menu.active {
+                display: flex; /* 활성화된 모바일 메뉴 표시 */
+            }
+            #content {
+                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
+            }
+            #notice-content p {
+                font-size: 14px; /* 공지사항 폰트 사이즈 조정 */
             }
         }
     </style>
@@ -205,6 +212,7 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 const notices = data.values;
+
                 const matchingNotices = notices.filter(row => row[0] === studentGrade);
 
                 if (matchingNotices.length > 0) {
@@ -244,13 +252,10 @@
             window.location.href = 'index.html';
         });
 
+        // 햄버거 메뉴 클릭 이벤트
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu.style.display === 'flex') {
-                mobileMenu.style.display = 'none';
-            } else {
-                mobileMenu.style.display = 'flex';
-            }
+            mobileMenu.classList.toggle('active'); // 메뉴 열기/닫기
         });
 
         loadNotices();
