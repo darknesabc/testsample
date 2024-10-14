@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const number = document.getElementById('number').value.trim();
     const errorElement = document.getElementById('error');
 
-    // 마스터 계정 확인 (예: username: "admin", password: "admin123")
+    // 마스터 계정 확인
     if (name === 'admin' && number === '1234') {
         window.location.href = 'admin-dashboard.html'; // 관리자 대시보드로 리디렉션
         return;
@@ -24,10 +24,11 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             const sheetNumber = row[13]; // 번호 (N열)
 
             // N열의 오른쪽 4자리 확인
-            const rightmostFourDigits = sheetNumber.slice(-4);
+            const rightmostFourDigits = sheetNumber.slice(-4); // N열의 오른쪽 4자리 추출
 
             console.log(`Checking: ${sheetName} (input: ${name}), ${rightmostFourDigits} (input: ${number})`); // 디버깅 메시지
 
+            // 이름과 오른쪽 4자리 번호 비교
             if (sheetName === name && rightmostFourDigits === number) {
                 matched = true;
                 break;
