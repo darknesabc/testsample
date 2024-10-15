@@ -101,6 +101,13 @@
             overflow: hidden; /* 넘치는 텍스트 숨김 */
             text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
         }
+        /* 출석 상태에 따른 배경색 */
+        .present {
+            background-color: #d4f4d7; /* 연한 초록색 */
+        }
+        .absent {
+            background-color: #f4cccc; /* 연한 빨간색 */
+        }
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -209,8 +216,10 @@
                         if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
                             if (cell === '1') {
                                 td.textContent = '출석';
+                                td.classList.add('present'); // 출석일 경우 초록색 배경 추가
                             } else if (cell === '3') {
                                 td.textContent = '결석';
+                                td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
                                 td.textContent = cell;
                             }
