@@ -13,13 +13,7 @@
             box-sizing: border-box;
         }
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 10px;
-            flex-wrap: wrap;
-            position: relative;
+            display: none; /* 헤더 숨기기 */
         }
         nav {
             display: flex;
@@ -128,42 +122,6 @@
     </style>
 </head>
 <body>
-    <header>
-        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
-        
-        <div class="hamburger" id="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
-        <nav>
-            <a href="attendance.html">출결현황</a>
-            <a href="#menu2">메뉴2</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </nav>
-
-        <div id="mobile-menu">
-            <a href="attendance.html">출결현황</a>
-            <a href="#menu2">메뉴2</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </div>
-
-        <div id="student-info">
-            <span id="seatNameDisplay"></span>
-            <div class="separator"></div>
-            <span id="nameDisplay"></span>
-            <div class="separator"></div>
-            <span id="gradeDisplay"></span>
-            <button id="logout-btn">로그아웃</button>
-        </div>
-    </header>
 
     <h1>출결현황</h1>
 
