@@ -205,6 +205,12 @@
             window.location.href = 'index.html';
         }
 
+        // 오늘 날짜로 기본 설정
+        const today = new Date();
+        const month = today.getMonth() + 1; // 0부터 시작하므로 1 더하기
+        const day = today.getDate();
+        document.getElementById('date').value = `${month}/${day}`; // MM/DD 형식으로 설정
+
         // 출결 데이터 가져오기
         async function fetchAttendanceData() {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
@@ -236,23 +242,11 @@
                                 } else if (cell === '3') {
                                     td.textContent = '결석';
                                     td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
                                 }
                             } else {
-                                td.textContent = cell;
+                                td.textContent = cell; // 기타 셀은 그대로 표시
                             }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    }
 
-                    // 두 번째 행도 항상 추가
-                    if (rowIndex === 1) {
-                        const tr = document.createElement('tr');
-                        row.forEach(cell => {
-                            const td = document.createElement('td');
-                            td.textContent = cell;
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
@@ -261,9 +255,10 @@
             }
         }
 
+        // 출결 데이터 가져오기 호출
         fetchAttendanceData();
 
-        // 햄버거 메뉴 토글 기능
+        // 햄버거 메뉴 클릭 시 동작
         const hamburger = document.getElementById('hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -271,10 +266,13 @@
             mobileMenu.classList.toggle('active');
         });
 
-        // 로그아웃 버튼 클릭 시 처리
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
+        // 페이지 로드 시 현재 날짜 설정
+        document.addEventListener('DOMContentLoaded', () => {
+            // 날짜 선택기 설정
+            const dateInput = document.getElementById('date');
+            const today = new Date();
+            const formattedDate = `${today.getMonth() + 1}/${today.getDate()}`; // MM/DD 형식
+            dateInput.value = formattedDate;
         });
     </script>
 </body>
