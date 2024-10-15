@@ -1,146 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출결현황</title>
-    <style>
-        /* 기본 스타일 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 10px;
-            flex-wrap: wrap;
-            position: relative; /* 햄버거 메뉴 위치 조정 */
-        }
-        nav {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        #student-info {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            white-space: nowrap;
-        }
-        #logout-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #welcome {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        .separator {
-            border-left: 1px solid #333;
-            height: 20px;
-            margin: 0 5px;
-        }
-        #mobile-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
-            border-radius: 5px; /* 메뉴 모서리 둥글게 */
-        }
-        #mobile-menu a {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            text-align: center; /* 가운데 정렬 */
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .hamburger div {
-            width: 25px;
-            height: 3px;
-            background-color: #333;
-        }
-        #attendance-content {
-            padding: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse; /* 테두리 합치기 */
-            margin-top: 10px;
-        }
-        td {
-            padding: 10px; /* 패딩 추가 */
-            text-align: left; /* 왼쪽 정렬 */
-            border: 1px solid #ccc; /* 각 셀에 테두리 추가 */
-            white-space: nowrap; /* 텍스트를 한 줄로 표시 */
-            overflow: hidden; /* 넘치는 내용 숨김 */
-            text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 표시 */
-        }
-        tr:hover {
-            background-color: #f9f9f9; /* 행에 마우스 오버 시 배경색 */
-        }
-
-        /* 데이터 상단 두 줄 색상 설정 */
-        .header-row {
-            background-color: #007bff; /* 파란색 배경 */
-            color: white; /* 흰색 글씨 */
-        }
-        .sub-header-row {
-            background-color: #6c757d; /* 회색 배경 */
-            color: white; /* 흰색 글씨 */
-        }
-
-        /* 반응형 스타일 */
-        @media (max-width: 768px) {
-            nav {
-                display: none; /* PC에서는 숨김 */
-            }
-            .hamburger {
-                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
-            }
-            #mobile-menu {
-                display: none; /* 모바일 메뉴 기본적으로 숨김 */
-            }
-            #mobile-menu.active {
-                display: flex; /* 활성화된 모바일 메뉴 표시 */
-            }
-            #content {
-                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
-            }
-            table {
-                font-size: 12px; /* 모바일에서 폰트 크기 조정 */
-            }
-            td {
-                padding: 8px; /* 모바일에서 패딩 조정 */
-            }
-        }
-    </style>
-</head>
 <body>
     <header>
         <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a> <!-- 흰색 집 아이콘 -->
@@ -186,15 +45,15 @@
             <table id="attendance-data">
                 <tbody>
                     <tr class="header-row">
-                        <td>자리번호</td>
-                        <td>이름</td>
-                        <td>학년</td>
-                        <td>출결상태</td>
-                        <td>날짜</td>
-                        <td>시간</td>
+                        <td style="width: 10%;">자리번호</td>
+                        <td style="width: 20%;">이름</td>
+                        <td style="width: 10%;">학년</td>
+                        <td style="width: 20%;">출결상태</td>
+                        <td style="width: 20%;">날짜</td>
+                        <td style="width: 20%;">시간</td>
                     </tr>
                     <tr class="sub-header-row">
-                        <td colspan="6">추가 정보나 설명이 여기에 들어갈 수 있습니다.</td>
+                        <td colspan="6" style="background-color: #6c757d; color: white;">추가 정보나 설명이 여기에 들어갈 수 있습니다.</td>
                     </tr>
                     <!-- 출결 데이터가 여기에 표시됩니다. -->
                 </tbody>
