@@ -93,13 +93,13 @@
             border-collapse: collapse; /* 테두리 합치기 */
             margin-top: 10px;
         }
-        th, td {
+        td {
             padding: 10px; /* 패딩 추가 */
             text-align: left; /* 왼쪽 정렬 */
             border-bottom: 1px solid #ccc; /* 하단 테두리 추가 */
-        }
-        th {
-            background-color: #f0f0f0; /* 헤더 배경색 */
+            white-space: nowrap; /* 텍스트를 한 줄로 표시 */
+            overflow: hidden; /* 넘치는 내용 숨김 */
+            text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 표시 */
         }
         tr:hover {
             background-color: #f9f9f9; /* 행에 마우스 오버 시 배경색 */
@@ -121,6 +121,12 @@
             }
             #content {
                 padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
+            }
+            table {
+                font-size: 12px; /* 모바일에서 폰트 크기 조정 */
+            }
+            td {
+                padding: 8px; /* 모바일에서 패딩 조정 */
             }
         }
     </style>
