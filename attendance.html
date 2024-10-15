@@ -178,13 +178,6 @@
         <table id="attendance-table">
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
-                <tr>
-                    <td colspan="2">1행 데이터</td>
-                </tr>
-                <tr>
-                    <td>2행 데이터 1</td>
-                    <td>2행 데이터 2</td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -220,41 +213,43 @@
                     
                     // 자리번호와 이름이 매칭될 경우에만 표시
                     if (seatNumber === studentSeatNumber && name === studentName) {
-                        const tr1 = document.createElement('tr');
-                        const tr2 = document.createElement('tr');
-                        
-                        // 첫 행은 1행 데이터를 표시 (자리번호와 이름 같은 데이터)
-                        const td1 = document.createElement('td');
-                        td1.setAttribute('colspan', '2'); // 1행을 두 개의 열로 표시
-                        td1.textContent = `자리번호: ${seatNumber}, 이름: ${name}`;
-                        tr1.appendChild(td1);
-                        
-                        // 두 번째 행은 2행 데이터를 표시 (예: 출석 상태)
+                        const tr = document.createElement('tr');
                         row.forEach((cell, index) => {
-                            if (index > 1) { // 첫 두 개 열은 이미 처리됨
-                                const td2 = document.createElement('td');
-                                td2.textContent = cell; // 실제 데이터 입력
-                                tr2.appendChild(td2);
-                            }
-                        });
+                            const td = document.createElement('td');
 
-                        tableBody.appendChild(tr1);
-                        tableBody.appendChild(tr2);
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
                     }
                 });
             } else {
-                console.error('데이터를 불러오지 못했습니다.');
+                console.error('No data found.');
             }
         }
 
         fetchAttendanceData();
 
-        // 햄버거 메뉴 기능
-        const hamburger = document.getElementById('hamburger');
-        const mobileMenu = document.getElementById('mobile-menu');
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        });
 
-        hamburger.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
         });
     </script>
 </body>
