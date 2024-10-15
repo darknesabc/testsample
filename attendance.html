@@ -263,16 +263,17 @@
 
         fetchAttendanceData();
 
-        // 햄버거 메뉴 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
-
-        // 로그아웃 버튼 클릭 시
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
             window.location.href = 'index.html';
+        });
+
+        // 햄버거 메뉴 기능
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
         });
     </script>
 </body>
