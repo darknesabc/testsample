@@ -115,6 +115,21 @@
             object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
         }
 
+        /* 테이블 스타일 */
+        #attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px; /* 테이블과 제목 간격 */
+        }
+        #attendance-table th, #attendance-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        #attendance-table th {
+            background-color: #f0f0f0;
+        }
+
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -132,7 +147,23 @@
             #content {
                 padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
             }
+            #attendance-table {
+                display: block; /* 모바일에서 테이블을 블록으로 표시 */
+                overflow-x: auto; /* 수평 스크롤 가능 */
+            }
+            #attendance-table th, #attendance-table td {
+                display: inline-block; /* 셀을 인라인 블록으로 변경 */
+                width: auto; /* 너비 자동 조정 */
+                white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+            }
         }
+
+        @media (min-width: 769px) {
+            #attendance-table th, #attendance-table td {
+                width: auto; /* 데스크톱에서는 기본 너비 사용 */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -178,7 +209,7 @@
     <div id="content">
         <div id="attendance-content">
             <p>출결현황 내용이 여기에 표시됩니다.</p>
-            <table id="attendance-table" border="1" style="width: 100%; border-collapse: collapse;">
+            <table id="attendance-table">
                 <thead>
                     <tr>
                         <th>자리번호</th>
@@ -232,26 +263,24 @@
                     const tableBody = document.getElementById('attendance-data');
                     tableBody.innerHTML = ''; // 기존 데이터 삭제
 
-                    data.values.forEach((row, index) => {
-                        if (index > 0) { // 첫 번째 행은 헤더이므로 건너뜀
-                            const newRow = tableBody.insertRow();
-                            row.forEach(cell => {
-                                const newCell = newRow.insertCell();
-                                newCell.textContent = cell; // 각 셀에 데이터 삽입
-                            });
-                        }
+                    data.values.forEach(row => {
+                        const tableRow = document.createElement('tr');
+                        row.forEach(cell => {
+                            const tableCell = document.createElement('td');
+                            tableCell.innerText = cell; // 각 셀에 데이터 추가
+                            tableRow.appendChild(tableCell);
+                        });
+                        tableBody.appendChild(tableRow); // 테이블에 행 추가
                     });
-                } else {
-                    console.error('No data found in the Google Sheet.');
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         }
 
-        // 페이지가 로드될 때 출결 데이터 불러오기
-        window.onload = fetchAttendanceData;
-
+        window.onload = () => {
+            fetchAttendanceData(); // 페이지 로드 시 데이터 가져오기
+        };
     </script>
 </body>
 </html>
