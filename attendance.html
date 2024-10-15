@@ -213,6 +213,15 @@
                 const tableBody = document.querySelector('#attendance-table tbody');
                 tableBody.innerHTML = ''; // 테이블 비우기
 
+                // 첫 번째 행(헤더) 추가
+                const headerRow = document.createElement('tr');
+                data.values[0].forEach(cell => {
+                    const th = document.createElement('th');
+                    th.textContent = cell;
+                    headerRow.appendChild(th);
+                });
+                tableBody.appendChild(headerRow);
+
                 const selectedDate = document.getElementById('datePicker').value;
 
                 data.values.forEach((row, rowIndex) => {
@@ -226,7 +235,7 @@
                         row.forEach((cell, index) => {
                             const td = document.createElement('td');
 
-                            // 날짜에 해당하는 열 처리 (G, I, K, M, O, Q, S 열)
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
                             if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
                                 // 선택된 날짜와 비교
                                 if (selectedDate) {
@@ -235,6 +244,9 @@
                                         td.textContent = cell === '1' ? '출석' : cell === '3' ? '결석' : '';
                                         td.classList.add(cell === '1' ? 'present' : cell === '3' ? 'absent' : '');
                                     }
+                                } else {
+                                    td.textContent = cell === '1' ? '출석' : cell === '3' ? '결석' : '';
+                                    td.classList.add(cell === '1' ? 'present' : cell === '3' ? 'absent' : '');
                                 }
                             } else {
                                 td.textContent = cell; // 그 외의 열은 그대로 표시
@@ -250,12 +262,13 @@
         // 날짜 선택시 출결 데이터 갱신
         document.getElementById('datePicker').addEventListener('change', fetchAttendanceData);
 
-        // 초기 출결 데이터 가져오기
+        // 초기 데이터 로드
         fetchAttendanceData();
 
-        // 햄버거 메뉴 토글 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
+        // 햄버거 메뉴 토글
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburger.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
         });
 
