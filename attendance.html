@@ -207,7 +207,9 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
-                data.values.forEach((row, rowIndex) => {
+
+                // 첫 번째 행과 두 번째 행 모두 표시
+                data.values.slice(0, 2).forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
 
@@ -236,21 +238,6 @@
                         tableBody.appendChild(tr);
                     }
                 });
-
-                // 첫 번째 행도 포함하여 표시
-                const firstRow = data.values[0];
-                const firstTr = document.createElement('tr');
-                firstRow.forEach((cell, index) => {
-                    const td = document.createElement('td');
-                    // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
-                    if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                        td.textContent = cell; // 날짜는 그대로 표시
-                    } else {
-                        td.textContent = cell;
-                    }
-                    firstTr.appendChild(td);
-                });
-                tableBody.prepend(firstTr); // 테이블의 맨 위에 추가
             }
         }
 
@@ -263,10 +250,10 @@
             mobileMenu.classList.toggle('active');
         });
 
-        // 로그아웃
+        // 로그아웃 버튼 클릭 시 로컬 스토리지 지우기 및 로그인 페이지로 리디렉션
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear(); // 로컬 스토리지 비우기
-            window.location.href = 'index.html'; // 로그인 페이지로 이동
+            localStorage.clear();
+            window.location.href = 'index.html'; // 로그인 페이지로 리디렉션
         });
     </script>
 </body>
