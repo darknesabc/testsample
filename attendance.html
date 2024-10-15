@@ -202,9 +202,21 @@
                 const tableBody = document.querySelector('#attendance-table tbody');
                 data.values.forEach((row) => {
                     const tr = document.createElement('tr');
-                    row.forEach((cell) => {
+                    row.forEach((cell, index) => {
                         const td = document.createElement('td');
-                        td.textContent = cell;
+
+                        // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                        if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                            if (cell === '1') {
+                                td.textContent = '출석';
+                            } else if (cell === '3') {
+                                td.textContent = '결석';
+                            } else {
+                                td.textContent = cell;
+                            }
+                        } else {
+                            td.textContent = cell;
+                        }
                         tr.appendChild(td);
                     });
                     tableBody.appendChild(tr);
