@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>출결 현황</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
     <style>
         /* 기본 스타일 */
         body {
@@ -18,13 +19,11 @@
             align-items: center;
             background-color: #f0f0f0;
             padding: 10px;
-            flex-wrap: wrap;
-            position: relative; /* 햄버거 메뉴 위치 조정 */
+            position: relative;
         }
         nav {
             display: flex;
             gap: 20px;
-            flex-wrap: wrap;
         }
         nav a {
             text-decoration: none;
@@ -46,9 +45,9 @@
             border-radius: 5px;
         }
         #home-icon {
-            font-size: 24px;
-            margin-right: 20px;
-            cursor: pointer;
+            font-size: 24px; /* 아이콘 크기 조정 */
+            color: white; /* 아이콘 색상 흰색 */
+            margin-right: 20px; /* 아이콘과 메뉴 간격 조정 */
         }
         .separator {
             border-left: 1px solid #333;
@@ -66,14 +65,14 @@
             left: 0;
             right: 0;
             z-index: 10;
-            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
-            border-radius: 5px; /* 메뉴 모서리 둥글게 */
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         #mobile-menu a {
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
-            text-align: center; /* 가운데 정렬 */
+            text-align: center;
         }
         .hamburger {
             display: none;
@@ -105,9 +104,9 @@
 </head>
 <body>
     <header>
-        <!-- "집" 모양 아이콘 -->
-        <a href="student-dashboard.html" id="home-icon">🏠</a>
-
+        <a href="student-dashboard.html" id="home-icon">
+            <i class="fas fa-home"></i> <!-- 흰색 집 아이콘 -->
+        </a>
         <div class="hamburger" id="hamburger">
             <div></div>
             <div></div>
@@ -115,22 +114,13 @@
         </div>
 
         <nav>
-            <a href="#menu1">메뉴1</a>
+            <a href="attendance.html">출결현황</a>
             <a href="#menu2">메뉴2</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
             <a href="#menu5">메뉴5</a>
             <a href="#menu6">메뉴6</a>
         </nav>
-
-        <div id="mobile-menu">
-            <a href="#menu1">메뉴1</a>
-            <a href="#menu2">메뉴2</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </div>
 
         <div id="student-info">
             <span id="seatNameDisplay"></span>
@@ -146,6 +136,7 @@
     <p>출결 현황 내용이 여기에 표시됩니다.</p>
 
     <script>
+        // 학생 정보 가져오기
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
         const studentGrade = localStorage.getItem('studentGrade');
@@ -155,17 +146,18 @@
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
-            window.location.href = 'index.html';
+            window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
         }
-
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
             window.location.href = 'index.html';
+        });
+
+        // 햄버거 메뉴 클릭 이벤트
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
         });
     </script>
 </body>
