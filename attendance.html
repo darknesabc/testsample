@@ -88,27 +88,21 @@
         #attendance-content {
             padding: 10px;
         }
-        #attendance-data {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 테두리 합치기 */
+            margin-top: 10px;
         }
-        .attendance-box {
-            padding: 10px;
-            background-color: #e0e0e0; /* 박스 색상 */
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between; /* 내용 양쪽 정렬 */
-            white-space: nowrap; /* 글자를 한 줄로 표시 */
-            overflow: hidden; /* 내용이 박스를 넘길 경우 숨김 */
-            text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+        th, td {
+            padding: 10px; /* 패딩 추가 */
+            text-align: left; /* 왼쪽 정렬 */
+            border-bottom: 1px solid #ccc; /* 하단 테두리 추가 */
         }
-
-        /* 반응형 이미지 스타일 */
-        #timetable-content img, #grades-content img {
-            max-width: 100%; /* 부모 요소 너비에 맞게 */
-            height: auto; /* 비율 유지 */
-            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
+        th {
+            background-color: #f0f0f0; /* 헤더 배경색 */
+        }
+        tr:hover {
+            background-color: #f9f9f9; /* 행에 마우스 오버 시 배경색 */
         }
 
         /* 반응형 스타일 */
@@ -173,9 +167,11 @@
 
     <div id="content">
         <div id="attendance-content">
-            <div id="attendance-data">
-                <!-- 출결 데이터가 여기에 표시됩니다. -->
-            </div>
+            <table id="attendance-data">
+                <tbody>
+                    <!-- 출결 데이터가 여기에 표시됩니다. -->
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -213,11 +209,12 @@
 
             if (data.values && data.values.length > 0) {
                 const attendanceDataContainer = document.getElementById('attendance-data');
-                data.values.forEach(row => {
-                    const attendanceBox = document.createElement('div');
-                    attendanceBox.className = 'attendance-box';
-                    attendanceBox.innerText = row.join(' | '); // 각 행을 '|'로 구분하여 표시
-                    attendanceDataContainer.appendChild(attendanceBox);
+                data.values.forEach((row, index) => {
+                    const newRow = attendanceDataContainer.insertRow(); // 새 행 추가
+                    row.forEach(cell => {
+                        const newCell = newRow.insertCell(); // 새 셀 추가
+                        newCell.innerText = cell; // 셀 내용 설정
+                    });
                 });
             }
         }
