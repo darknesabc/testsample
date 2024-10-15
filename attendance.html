@@ -176,6 +176,18 @@
 
     <div id="attendance-content">
         <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>자리번호</th>
+                    <th>이름</th>
+                    <th>담임</th>
+                    <th>학년</th>
+                    <th>교시</th>
+                    <th>요일</th>
+                    <th>날짜</th>
+                    <!-- 필요에 따라 추가 헤더 -->
+                </tr>
+            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -207,12 +219,10 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
-                data.values.forEach((row) => {
-                    const seatNumber = row[0]; // 자리번호 (A열)
-                    const name = row[1]; // 이름 (B열)
-                    
-                    // 자리번호와 이름이 매칭될 경우에만 표시
-                    if (seatNumber === studentSeatNumber && name === studentName) {
+                
+                // 1행(헤더)과 2행(첫 번째 데이터) 표시
+                data.values.forEach((row, rowIndex) => {
+                    if (rowIndex === 0 || rowIndex === 1) { // 1행(헤더)과 2행(첫 번째 데이터)
                         const tr = document.createElement('tr');
                         row.forEach((cell, index) => {
                             const td = document.createElement('td');
@@ -243,13 +253,15 @@
 
         fetchAttendanceData();
 
+        // 햄버거 메뉴 기능
         document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('active');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
+            localStorage.clear(); // 모든 로컬 스토리지 데이터 지우기
+            window.location.href = 'index.html'; // 로그인 페이지로 이동
         });
     </script>
 </body>
