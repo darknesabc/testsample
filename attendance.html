@@ -174,6 +174,10 @@
 
     <h1>출결현황</h1>
 
+    <!-- 날짜 선택기 추가 -->
+    <label for="datePicker">날짜 선택:</label>
+    <input type="date" id="datePicker">
+
     <div id="attendance-content">
         <table id="attendance-table">
             <tbody>
@@ -196,6 +200,8 @@
         }
 
         // 출결 데이터 가져오기
+        let allAttendanceData = [];
+
         async function fetchAttendanceData() {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
@@ -207,86 +213,97 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
+                allAttendanceData = data.values; // 전체 데이터 저장
+
+                // 데이터 초기화
+                tableBody.innerHTML = '';
 
                 // 첫 번째 행(헤더) 추가
                 const headerRow = document.createElement('tr');
-                data.values[0].forEach(cell => {
+                allAttendanceData[0].forEach(cell => {
                     const th = document.createElement('th');
                     th.textContent = cell;
                     headerRow.appendChild(th);
                 });
                 tableBody.appendChild(headerRow);
 
-                data.values.forEach((row, rowIndex) => {
-                    const seatNumber = row[0]; // 자리번호 (A열)
-                    const name = row[1]; // 이름 (B열)
-
-                    // 자리번호와 이름이 매칭될 경우에만 표시
-                    if (seatNumber === studentSeatNumber && name === studentName) {
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    }
-
-                    // 두 번째 행도 항상 추가
-                    if (rowIndex === 1) {
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present');
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent');
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    }
-                });
+                displayAttendanceData(allAttendanceData); // 모든 출결 데이터 표시
             }
         }
 
-        // 햄버거 메뉴 토글 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
+        function displayAttendanceData(data) {
+            const tableBody = document.querySelector('#attendance-table tbody');
+            data.forEach((row, rowIndex) => {
+                const seatNumber = row[0]; // 자리번호 (A열)
+                const name = row[1]; // 이름 (B열)
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
+                // 자리번호와 이름이 매칭될 경우에만 표시
+                if (seatNumber === studentSeatNumber && name === studentName) {
+                    const tr = document.createElement('tr');
+                    row.forEach((cell, index) => {
+                        const td = document.createElement('td');
+
+                        // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                        if (index === 5) {
+                            // 요일(출석 여부)
+                            if (cell === '1') {
+                                td.textContent = '출석';
+                                td.classList.add('present');
+                            } else if (cell === '3') {
+                                td.textContent = '결석';
+                                td.classList.add('absent');
+                            }
+                        } else {
+                            td.textContent = cell; // 나머지 데이터 표시
+                        }
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                }
+            });
+        }
+
+        // 날짜 선택기에 대한 이벤트 리스너 추가
+        document.getElementById('datePicker').addEventListener('change', function() {
+            const selectedDate = this.value; // 선택한 날짜
+            const filteredData = allAttendanceData.filter(row => {
+                const rowDate = row[6]; // G열 (날짜 열)
+                return rowDate === selectedDate; // 날짜가 일치하는 행만 필터링
+            });
+
+            // 테이블에 필터링된 데이터 표시
+            const tableBody = document.querySelector('#attendance-table tbody');
+            tableBody.innerHTML = ''; // 기존 데이터 초기화
+
+            if (filteredData.length > 0) {
+                filteredData.forEach((row, rowIndex) => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell; // 데이터 표시
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="7">해당 날짜에 출결 데이터가 없습니다.</td></tr>'; // 데이터 없음 메시지
+            }
         });
 
         // 페이지 로드 시 데이터 가져오기
         window.onload = fetchAttendanceData;
+
+        // 햄버거 메뉴 기능
+        document.getElementById('hamburger').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // 로그아웃 버튼 클릭 시
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            localStorage.clear(); // 로컬 스토리지 데이터 삭제
+            window.location.href = 'index.html'; // 로그인 페이지로 이동
+        });
     </script>
 </body>
 </html>
