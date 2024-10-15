@@ -108,6 +108,10 @@
         .absent {
             background-color: #f4cccc; /* 연한 빨간색 */
         }
+        /* 날짜 선택기 스타일 */
+        #date-picker {
+            margin: 10px 0;
+        }
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -173,6 +177,12 @@
     </header>
 
     <h1>출결현황</h1>
+
+    <!-- 날짜 선택기 추가 -->
+    <div id="date-picker">
+        <label for="date">날짜 선택:</label>
+        <input type="date" id="date" />
+    </div>
 
     <div id="attendance-content">
         <table id="attendance-table">
@@ -240,23 +250,9 @@
                     // 두 번째 행도 항상 추가
                     if (rowIndex === 1) {
                         const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
+                        row.forEach(cell => {
                             const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
+                            td.textContent = cell;
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
