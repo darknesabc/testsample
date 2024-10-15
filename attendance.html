@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출결 현황</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>출결현황</title>
     <style>
         /* 기본 스타일 */
         body {
@@ -19,6 +18,7 @@
             align-items: center;
             background-color: #f0f0f0;
             padding: 10px;
+            flex-wrap: wrap;
             position: relative; /* 햄버거 메뉴 위치 조정 */
         }
         nav {
@@ -45,10 +45,9 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        #home-icon {
+        #welcome {
             font-size: 24px;
-            color: #333; /* 집 아이콘 색상 변경 */
-            margin-right: 10px;
+            margin: 20px 0;
         }
         .separator {
             border-left: 1px solid #333;
@@ -86,6 +85,36 @@
             height: 3px;
             background-color: #333;
         }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .active {
+            background-color: #ddd;
+        }
+        #content {
+            padding: 10px; /* 콘텐츠 패딩 추가 */
+        }
+        #attendance-content {
+            padding: 10px;
+        }
+
+        /* 반응형 이미지 스타일 */
+        #timetable-content img, #grades-content img {
+            max-width: 100%; /* 부모 요소 너비에 맞게 */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
+        }
+
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -100,12 +129,16 @@
             #mobile-menu.active {
                 display: flex; /* 활성화된 모바일 메뉴 표시 */
             }
+            #content {
+                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <a href="student-dashboard.html" id="home-icon">🏠</a>
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a> <!-- 흰색 집 아이콘 -->
+        
         <div class="hamburger" id="hamburger">
             <div></div>
             <div></div>
@@ -113,7 +146,7 @@
         </div>
 
         <nav>
-            <a href="#attendance-status">출결현황</a>
+            <a href="attendance.html">출결현황</a> <!-- 출결현황 링크 -->
             <a href="#menu2">메뉴2</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -122,7 +155,7 @@
         </nav>
 
         <div id="mobile-menu">
-            <a href="#attendance-status">출결현황</a>
+            <a href="attendance.html">출결현황</a>
             <a href="#menu2">메뉴2</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -140,10 +173,27 @@
         </div>
     </header>
 
-    <h1>출결 현황</h1>
-    <!-- 출결 현황 내용이 여기에 표시됩니다. -->
+    <h1>출결현황</h1>
+
+    <div id="content">
+        <div id="attendance-content">
+            <p>출결현황 내용이 여기에 표시됩니다.</p>
+        </div>
+    </div>
 
     <script>
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
+
+        if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            window.location.href = 'index.html';
+        }
+
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
