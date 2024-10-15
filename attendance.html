@@ -93,10 +93,10 @@
             border-collapse: collapse; /* 테두리 합치기 */
             margin-top: 10px;
         }
-        td {
+        th, td {
             padding: 10px; /* 패딩 추가 */
             text-align: left; /* 왼쪽 정렬 */
-            border-bottom: 1px solid #ccc; /* 하단 테두리 추가 */
+            border: 1px solid #ccc; /* 각 셀에 테두리 추가 */
             white-space: nowrap; /* 텍스트를 한 줄로 표시 */
             overflow: hidden; /* 넘치는 내용 숨김 */
             text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 표시 */
@@ -125,7 +125,7 @@
             table {
                 font-size: 12px; /* 모바일에서 폰트 크기 조정 */
             }
-            td {
+            th, td {
                 padding: 8px; /* 모바일에서 패딩 조정 */
             }
         }
@@ -174,6 +174,17 @@
     <div id="content">
         <div id="attendance-content">
             <table id="attendance-data">
+                <thead>
+                    <tr>
+                        <th>자리번호</th>
+                        <th>이름</th>
+                        <th>학년</th>
+                        <th>출결상태</th>
+                        <th>날짜</th>
+                        <th>시간</th>
+                        <!-- 필요한 추가 헤더 -->
+                    </tr>
+                </thead>
                 <tbody>
                     <!-- 출결 데이터가 여기에 표시됩니다. -->
                 </tbody>
@@ -214,8 +225,8 @@
             const data = await response.json();
 
             if (data.values && data.values.length > 0) {
-                const attendanceDataContainer = document.getElementById('attendance-data');
-                data.values.forEach((row, index) => {
+                const attendanceDataContainer = document.getElementById('attendance-data').getElementsByTagName('tbody')[0];
+                data.values.forEach((row) => {
                     const newRow = attendanceDataContainer.insertRow(); // 새 행 추가
                     row.forEach(cell => {
                         const newCell = newRow.insertCell(); // 새 셀 추가
