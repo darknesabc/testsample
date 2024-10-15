@@ -206,7 +206,7 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(date) {
+        async function fetchAttendanceData(selectedDate) {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -222,22 +222,53 @@
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
-                    const selectedDateIndex = getSelectedDateIndex(date); // 선택한 날짜의 인덱스
-                    const attendanceStatus = row[selectedDateIndex]; // 선택한 날짜에 대한 출결 상태
 
                     // 자리번호와 이름이 매칭될 경우에만 표시
                     if (seatNumber === studentSeatNumber && name === studentName) {
                         const tr = document.createElement('tr');
-                        tr.appendChild(createCell(attendanceStatus));
-                        tableBody.appendChild(tr);
-                    }
-
-                    // 두 번째 행도 항상 추가
-                    if (rowIndex === 1) {
-                        const tr = document.createElement('tr');
-                        row.forEach(cell => {
+                        row.forEach((cell, index) => {
                             const td = document.createElement('td');
-                            td.textContent = cell;
+
+                            // 날짜에 해당하는 요일과 날짜 처리
+                            const dateIndex = {
+                                "월": 6,
+                                "화": 8,
+                                "수": 10,
+                                "목": 12,
+                                "금": 14,
+                                "토": 16,
+                                "일": 18
+                            };
+                            
+                            if (selectedDate) {
+                                const dateValue = new Date(selectedDate);
+                                const dayOfWeek = dateValue.toLocaleString('ko-KR', { weekday: 'long' });
+
+                                // 선택된 날짜의 요일에 해당하는 데이터만 표시
+                                if (index === dateIndex[dayOfWeek]) {
+                                    if (cell === '1') {
+                                        td.textContent = '출석';
+                                        td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                    } else if (cell === '3') {
+                                        td.textContent = '결석';
+                                        td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                    } else {
+                                        td.textContent = cell; // 기타 값은 그대로 표시
+                                    }
+                                }
+                            } else {
+                                // 선택된 날짜가 없는 경우 기존 데이터 모두 표시
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present');
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent');
+                                } else {
+                                    td.textContent = cell; // 기타 값은 그대로 표시
+                                }
+                            }
+
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
@@ -246,34 +277,27 @@
             }
         }
 
-        // 선택한 날짜의 인덱스를 반환하는 함수
-        function getSelectedDateIndex(date) {
-            // 예시: 날짜를 'YYYY-MM-DD' 형식으로 가정
-            // 헤더의 날짜가 'YYYY-MM-DD' 형식이라면, 해당 날짜의 인덱스를 반환합니다.
-            // 실제 데이터에서 날짜 형식과 인덱스를 확인한 후 수정해야 합니다.
-            const headerRow = ['날짜1', '날짜2', '날짜3', '날짜4', '날짜5', '날짜6', '날짜7']; // 예시 헤더
-            const formattedDate = new Date(date).toLocaleDateString('ko-KR');
-            return headerRow.indexOf(formattedDate);
-        }
+        // 초기 데이터 로드
+        fetchAttendanceData();
 
-        // 날짜 선택 이벤트 리스너
+        // 날짜 선택기 이벤트 리스너
         document.getElementById('date').addEventListener('change', (event) => {
-            const selectedDate = event.target.value;
-            fetchAttendanceData(selectedDate);
+            const selectedDate = event.target.value; // 선택된 날짜
+            fetchAttendanceData(selectedDate); // 선택된 날짜로 출결 데이터 재요청
         });
 
-        // 초기 데이터 로딩
-        fetchAttendanceData(); // 기본적으로 데이터를 가져옵니다.
+        // 햄버거 메뉴 이벤트
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active'); // 메뉴 토글
+        });
         
         // 로그아웃 버튼 이벤트
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html'; // 로그아웃 시 인덱스 페이지로 이동
-        });
-
-        // 햄버거 메뉴 토글 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('active');
+            localStorage.clear(); // 로컬 스토리지 초기화
+            window.location.href = 'index.html'; // 로그인 페이지로 이동
         });
     </script>
 </body>
