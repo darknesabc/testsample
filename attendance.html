@@ -115,12 +115,12 @@
             color: white; /* 흰색 글씨 */
         }
 
-        /* 출석 및 결석 색상 설정 */
+        /* 출석 및 결석 상태 스타일 */
         .present {
-            background-color: #d4edda; /* 연두색 배경 */
+            background-color: #d4edda; /* 연한 초록색 */
         }
         .absent {
-            background-color: #f8d7da; /* 연한 빨간색 배경 */
+            background-color: #f8d7da; /* 연한 빨간색 */
         }
 
         /* 반응형 스타일 */
@@ -240,28 +240,46 @@
             const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
             const data = await response.json();
 
-            const attendanceData = data.values.slice(1); // 첫 번째 행(헤더)을 제외하고 데이터 가져오기
-            const tbody = document.querySelector('#attendance-data tbody');
+            if (data.values && data.values.length > 0) {
+                const attendanceDataContainer = document.getElementById('attendance-data');
+                data.values.forEach((row) => {
+                    const tr = document.createElement('tr');
 
-            attendanceData.forEach(row => {
-                const tr = document.createElement('tr');
-                const attendanceStatus = row[5]; // 출결 상태
-                const date = row[6]; // 날짜
+                    const attendanceStatus = row[5]; // 출결상태 (F열)
+                    const tdStatus = document.createElement('td');
 
-                tr.innerHTML = `
-                    <td>${row[0]}</td> <!-- 자리번호 -->
-                    <td>${row[1]}</td> <!-- 이름 -->
-                    <td>${row[2]}</td> <!-- 담임 -->
-                    <td>${row[3]}</td> <!-- 학년 -->
-                    <td>${row[4]}</td> <!-- 교시 -->
-                    <td class="${attendanceStatus == '1' ? 'present' : (attendanceStatus == '3' ? 'absent' : '')}">
-                        ${attendanceStatus == '1' ? '출석' : (attendanceStatus == '3' ? '결석' : '')}
-                    </td>
-                    <td>${date}</td> <!-- 날짜 -->
-                `;
+                    // 출결 상태에 따라 색상 지정
+                    if (attendanceStatus === '1') {
+                        tr.classList.add('present');
+                        tdStatus.innerText = '출석'; // '출석'으로 표시
+                    } else if (attendanceStatus === '3') {
+                        tr.classList.add('absent');
+                        tdStatus.innerText = '결석'; // '결석'으로 표시
+                    } else {
+                        tdStatus.innerText = '미제출'; // 기본값
+                    }
 
-                tbody.appendChild(tr);
-            });
+                    // 나머지 데이터 추가
+                    const seatNumber = row[0]; // A열
+                    const name = row[1]; // B열
+                    const homeroomTeacher = row[2]; // C열
+                    const grade = row[3]; // D열
+                    const classPeriod = row[4]; // E열
+                    const date = row[6]; // G열
+
+                    tr.innerHTML = `
+                        <td>${seatNumber}</td>
+                        <td>${name}</td>
+                        <td>${homeroomTeacher}</td>
+                        <td>${grade}</td>
+                        <td>${classPeriod}</td>
+                        <td>${tdStatus.innerText}</td>
+                        <td>${date}</td>
+                    `;
+                    tr.appendChild(tdStatus); // 상태 추가
+                    attendanceDataContainer.appendChild(tr);
+                });
+            }
         }
 
         fetchAttendanceData();
