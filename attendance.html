@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            background-color: #ffffff; /* 배경색 추가 */
         }
         header {
             display: flex;
@@ -93,7 +94,7 @@
             border-collapse: collapse; /* 테두리 합치기 */
             margin-top: 10px;
         }
-        td {
+        th, td {
             padding: 10px; /* 패딩 추가 */
             text-align: left; /* 왼쪽 정렬 */
             border: 1px solid #ccc; /* 각 셀에 테두리 추가 */
@@ -101,18 +102,12 @@
             overflow: hidden; /* 넘치는 내용 숨김 */
             text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 표시 */
         }
+        th {
+            background-color: #007bff; /* 헤더 색상 */
+            color: white; /* 헤더 텍스트 색상 */
+        }
         tr:hover {
             background-color: #f9f9f9; /* 행에 마우스 오버 시 배경색 */
-        }
-
-        /* 데이터 상단 두 줄 색상 설정 */
-        .header-row {
-            background-color: #007bff; /* 파란색 배경 */
-            color: white; /* 흰색 글씨 */
-        }
-        .sub-header-row {
-            background-color: #6c757d; /* 회색 배경 */
-            color: white; /* 흰색 글씨 */
         }
 
         /* 반응형 스타일 */
@@ -184,16 +179,18 @@
     <div id="content">
         <div id="attendance-content">
             <table id="attendance-data">
-                <tbody>
-                    <tr class="header-row" style="display: none;"> <!-- 헤더 행 숨기기 -->
-                        <td style="width: 10%;">자리번호</td>
-                        <td style="width: 20%;">이름</td>
-                        <td style="width: 10%;">담임</td>
-                        <td style="width: 10%;">학년</td>
-                        <td style="width: 20%;">교시</td>
-                        <td style="width: 20%;">출결상태</td>
-                        <td style="width: 20%;">날짜</td>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">자리번호</th>
+                        <th style="width: 20%;">이름</th>
+                        <th style="width: 10%;">담임</th>
+                        <th style="width: 10%;">학년</th>
+                        <th style="width: 20%;">교시</th>
+                        <th style="width: 20%;">출결상태</th>
+                        <th style="width: 20%;">날짜</th>
                     </tr>
+                </thead>
+                <tbody>
                     <!-- 출결 데이터가 여기에 표시됩니다. -->
                 </tbody>
             </table>
@@ -233,36 +230,23 @@
             const data = await response.json();
 
             if (data.values && data.values.length > 0) {
-                const attendanceDataContainer = document.getElementById('attendance-data');
+                const attendanceDataContainer = document.getElementById('attendance-data').getElementsByTagName('tbody')[0];
                 data.values.forEach((row) => {
                     const newRow = attendanceDataContainer.insertRow(); // 새 행 추가
                     row.forEach((cell, index) => {
                         const newCell = newRow.insertCell(); // 새 셀 추가
-                        newCell.innerText = cell; // 셀에 값 삽입
-
-                        // 로컬 스토리지에 저장
-                        if (index === 0) {
-                            localStorage.setItem(`attendance_seatNumber_${row[1]}`, cell); // A열 자리번호
-                        } else if (index === 1) {
-                            localStorage.setItem(`attendance_name_${cell}`, cell); // B열 이름
-                        } else if (index === 2) {
-                            localStorage.setItem(`attendance_teacher_${cell}`, cell); // C열 담임
-                        } else if (index === 3) {
-                            localStorage.setItem(`attendance_grade_${cell}`, cell); // D열 학년
-                        } else if (index === 4) {
-                            localStorage.setItem(`attendance_class_${cell}`, cell); // E열 교시
-                        } else if ([5, 7, 9, 11, 13, 15].includes(index)) {
-                            localStorage.setItem(`attendance_weekday_${cell}`, cell); // F,H,J,L,N,P,R열 요일
-                        } else if ([6, 8, 10, 12, 14, 16].includes(index)) {
-                            localStorage.setItem(`attendance_date_${cell}`, cell); // G,I,K,M,O,Q,S열 날짜
+                        // 출결 상태 변환
+                        if (index === 5) { // 출결상태가 있는 열
+                            newCell.innerText = cell === '1' ? '출석' : cell === '3' ? '결석' : ''; // 출결 상태 변환
+                        } else {
+                            newCell.innerText = cell; // 나머지 데이터
                         }
                     });
                 });
             }
         }
 
-        // 페이지 로드 시 출결 데이터 불러오기
-        window.onload = fetchAttendanceData;
+        fetchAttendanceData(); // 데이터 가져오기
     </script>
 </body>
 </html>
