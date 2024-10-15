@@ -19,7 +19,7 @@
             background-color: #f0f0f0;
             padding: 10px;
             flex-wrap: wrap;
-            position: relative; /* 햄버거 메뉴 위치 조정 */
+            position: relative;
         }
         nav {
             display: flex;
@@ -65,14 +65,14 @@
             left: 0;
             right: 0;
             z-index: 10;
-            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
-            border-radius: 5px; /* 메뉴 모서리 둥글게 */
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         #mobile-menu a {
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
-            text-align: center; /* 가운데 정렬 */
+            text-align: center;
         }
         .hamburger {
             display: none;
@@ -85,33 +85,21 @@
             height: 3px;
             background-color: #333;
         }
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-        }
-        .active {
-            background-color: #ddd;
-        }
-        #content {
-            padding: 10px; /* 콘텐츠 패딩 추가 */
-        }
         #attendance-content {
             padding: 10px;
         }
-        /* 반응형 이미지 스타일 */
-        #timetable-content img, #grades-content img {
-            max-width: 100%; /* 부모 요소 너비에 맞게 */
-            height: auto; /* 비율 유지 */
-            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
+        #attendance-table {
+            width: 100%;
+            border-collapse: collapse; /* 테두리 겹침 방지 */
+        }
+        #attendance-table th,
+        #attendance-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+            overflow: hidden; /* 넘치는 텍스트 숨김 */
+            text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
         }
         /* 반응형 스타일 */
         @media (max-width: 768px) {
@@ -127,15 +115,21 @@
             #mobile-menu.active {
                 display: flex; /* 활성화된 모바일 메뉴 표시 */
             }
-            #content {
-                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
+            #attendance-table th, #attendance-table td {
+                font-size: 14px; /* 모바일에서 글자 크기 조정 */
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            #attendance-table th, #attendance-table td {
+                font-size: 16px; /* 태블릿에서 글자 크기 조정 */
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a> <!-- 흰색 집 아이콘 -->
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
         
         <div class="hamburger" id="hamburger">
             <div></div>
@@ -144,7 +138,7 @@
         </div>
 
         <nav>
-            <a href="attendance.html">출결현황</a> <!-- 출결현황 링크 -->
+            <a href="attendance.html">출결현황</a>
             <a href="#menu2">메뉴2</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -173,26 +167,24 @@
 
     <h1>출결현황</h1>
 
-    <div id="content">
-        <div id="attendance-content">
-            <p>출결현황 내용이 여기에 표시됩니다.</p>
-            <table id="attendance-table" border="1">
-                <thead>
-                    <tr>
-                        <th>자리번호</th>
-                        <th>이름</th>
-                        <th>담임</th>
-                        <th>학년</th>
-                        <th>교시</th>
-                        <th>요일</th>
-                        <th>날짜</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- 출결 데이터가 여기에 추가됩니다. -->
-                </tbody>
-            </table>
-        </div>
+    <div id="attendance-content">
+        <p>출결현황 내용이 여기에 표시됩니다.</p>
+        <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>자리번호</th>
+                    <th>이름</th>
+                    <th>담임</th>
+                    <th>학년</th>
+                    <th>교시</th>
+                    <th>요일</th>
+                    <th>날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 출결 데이터가 여기에 추가됩니다. -->
+            </tbody>
+        </table>
     </div>
 
     <script>
