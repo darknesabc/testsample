@@ -239,9 +239,6 @@
                         const newCell = newRow.insertCell(); // 새 셀 추가
                         newCell.innerText = cell; // 셀에 값 삽입
                     });
-
-                    // 출결 상태 수정
-                    newRow.cells[3].innerText = newRow.cells[3].innerText === '1' ? '출석' : newRow.cells[3].innerText === '3' ? '결석' : newRow.cells[3].innerText;
                 });
             }
         }
