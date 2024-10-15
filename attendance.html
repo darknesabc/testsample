@@ -207,6 +207,18 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
+
+                // 1행 데이터 표시
+                const headerRow = data.values[0]; // 1행 데이터
+                const trHeader = document.createElement('tr');
+                headerRow.forEach((cell) => {
+                    const th = document.createElement('th');
+                    th.textContent = cell; // 1행 데이터는 헤더로 표시
+                    trHeader.appendChild(th);
+                });
+                tableBody.appendChild(trHeader);
+
+                // 출석 데이터 표시
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
@@ -226,53 +238,33 @@
                                     td.textContent = '결석';
                                     td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                                 } else {
-                                    td.textContent = cell;
+                                    td.textContent = '-'; // 그 외의 경우에는 하이픈 표시
                                 }
                             } else {
-                                td.textContent = cell;
+                                td.textContent = cell; // 나머지 데이터는 그대로 표시
                             }
                             tr.appendChild(td);
                         });
-                        tableBody.appendChild(tr);
-                    } else if (rowIndex === 1) { // 2행도 포함
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
+                        tableBody.appendChild(tr); // 매칭된 데이터만 추가
                     }
                 });
             }
         }
 
-        fetchAttendanceData();
+        fetchAttendanceData(); // 출결 데이터 가져오기
 
         // 햄버거 메뉴 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
         });
 
-        // 로그아웃 버튼 클릭 시
+        // 로그아웃 버튼 클릭 이벤트
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
+            localStorage.clear(); // 로컬 스토리지 데이터 초기화
+            window.location.href = 'index.html'; // 로그인 페이지로 이동
         });
     </script>
 </body>
