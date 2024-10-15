@@ -216,26 +216,43 @@
                         const tr = document.createElement('tr');
                         row.forEach((cell, index) => {
                             const td = document.createElement('td');
-                            td.textContent = cell;
-                            // 출석 상태 변경
-                            if (cell === '1') {
-                                td.classList.add('present');
-                                td.textContent = '출석';
-                            } else if (cell === '3') {
-                                td.classList.add('absent');
-                                td.textContent = '결석';
+
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
                             }
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
-                    }
-
-                    // 두 번째 행의 데이터도 가져오기 (rowIndex === 1)
-                    if (rowIndex === 1) {
+                    } else if (rowIndex === 1) { // 2행도 포함
                         const tr = document.createElement('tr');
-                        row.forEach((cell) => {
+                        row.forEach((cell, index) => {
                             const td = document.createElement('td');
-                            td.textContent = cell;
+
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
@@ -247,13 +264,12 @@
         fetchAttendanceData();
 
         // 햄버거 메뉴 기능
-        const hamburger = document.getElementById('hamburger');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        hamburger.addEventListener('click', () => {
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
         });
 
+        // 로그아웃 버튼 클릭 시
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
             window.location.href = 'index.html';
