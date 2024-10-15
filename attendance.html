@@ -115,6 +115,14 @@
             color: white; /* 흰색 글씨 */
         }
 
+        /* 출석 및 결석 색상 설정 */
+        .present {
+            color: #28a745; /* 연락 초록색 */
+        }
+        .absent {
+            color: #dc3545; /* 연락 빨간색 */
+        }
+
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -233,36 +241,63 @@
             const data = await response.json();
 
             if (data.values && data.values.length > 0) {
-                const attendanceDataContainer = document.getElementById('attendance-data');
-                data.values.forEach((row) => {
-                    const newRow = attendanceDataContainer.insertRow(); // 새 행 추가
-                    row.forEach((cell, index) => {
-                        const newCell = newRow.insertCell(); // 새 셀 추가
-                        newCell.innerText = cell; // 셀에 값 삽입
+                const attendanceDataContainer = document.getElementById('attendance-data').getElementsByTagName('tbody')[0];
 
-                        // 로컬 스토리지에 저장
-                        if (index === 0) {
-                            localStorage.setItem(`attendance_seatNumber_${row[1]}`, cell); // A열 자리번호
-                        } else if (index === 1) {
-                            localStorage.setItem(`attendance_name_${cell}`, cell); // B열 이름
-                        } else if (index === 2) {
-                            localStorage.setItem(`attendance_teacher_${cell}`, cell); // C열 담임
-                        } else if (index === 3) {
-                            localStorage.setItem(`attendance_grade_${cell}`, cell); // D열 학년
-                        } else if (index === 4) {
-                            localStorage.setItem(`attendance_class_${cell}`, cell); // E열 교시
-                        } else if ([5, 7, 9, 11, 13, 15].includes(index)) {
-                            localStorage.setItem(`attendance_weekday_${cell}`, cell); // F,H,J,L,N,P,R열 요일
-                        } else if ([6, 8, 10, 12, 14, 16].includes(index)) {
-                            localStorage.setItem(`attendance_date_${cell}`, cell); // G,I,K,M,O,Q,S열 날짜
+                data.values.forEach((row, index) => {
+                    if (index > 0) { // 첫 번째 행은 헤더이므로 무시
+                        const tr = document.createElement('tr');
+
+                        // 자리번호
+                        const tdSeatNumber = document.createElement('td');
+                        tdSeatNumber.textContent = row[0] || ''; // A열
+                        tr.appendChild(tdSeatNumber);
+
+                        // 이름
+                        const tdName = document.createElement('td');
+                        tdName.textContent = row[1] || ''; // B열
+                        tr.appendChild(tdName);
+
+                        // 담임
+                        const tdHomeroom = document.createElement('td');
+                        tdHomeroom.textContent = row[2] || ''; // C열
+                        tr.appendChild(tdHomeroom);
+
+                        // 학년
+                        const tdGrade = document.createElement('td');
+                        tdGrade.textContent = row[3] || ''; // D열
+                        tr.appendChild(tdGrade);
+
+                        // 교시
+                        const tdPeriod = document.createElement('td');
+                        tdPeriod.textContent = row[4] || ''; // E열
+                        tr.appendChild(tdPeriod);
+
+                        // 출결 상태
+                        const tdAttendanceStatus = document.createElement('td');
+                        const status = row[5]; // F열 (출결 상태)
+                        if (status === '1') {
+                            tdAttendanceStatus.textContent = '출석';
+                            tdAttendanceStatus.classList.add('present'); // 연락 초록색
+                        } else if (status === '3') {
+                            tdAttendanceStatus.textContent = '결석';
+                            tdAttendanceStatus.classList.add('absent'); // 연락 빨간색
+                        } else {
+                            tdAttendanceStatus.textContent = status; // 상태가 1이나 3이 아닐 경우 그대로 표시
                         }
-                    });
+                        tr.appendChild(tdAttendanceStatus);
+
+                        // 날짜
+                        const tdDate = document.createElement('td');
+                        tdDate.textContent = row[6] || ''; // G열
+                        tr.appendChild(tdDate);
+
+                        attendanceDataContainer.appendChild(tr);
+                    }
                 });
             }
         }
 
-        // 페이지 로드 시 출결 데이터 불러오기
-        window.onload = fetchAttendanceData;
+        fetchAttendanceData();
     </script>
 </body>
 </html>
