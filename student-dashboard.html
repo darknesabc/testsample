@@ -109,6 +109,13 @@
             padding: 5px 0; /* 패딩 추가 */
         }
 
+        /* 반응형 이미지 스타일 */
+        #timetable-content img, #grades-content img {
+            max-width: 100%; /* 부모 요소 너비에 맞게 */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
+        }
+
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -182,10 +189,10 @@
             <p>공지사항 내용이 여기에 표시됩니다.</p>
         </div>
         <div id="timetable-content" style="display:none;">
-            <img src="timetable_image.png" alt="정규시간표" style="width:100%; height:auto;">
+            <img src="timetable_image.png" alt="정규시간표" style="max-width: 100%; height: auto; object-fit: contain;">
         </div>
         <div id="grades-content" style="display:none;">
-            <img src="grades_image.png" alt="교육점수표" style="width:100%; height:auto;">
+            <img src="grades_image.png" alt="교육점수표" style="max-width: 100%; height: auto; object-fit: contain;">
         </div>
     </div>
 
@@ -238,28 +245,22 @@
                 tab.classList.add('active');
                 const activeContent = document.getElementById(`${tab.id.replace('tab-', '')}-content`);
                 activeContent.style.display = 'block';
-
-                if (tab.id === 'tab-notice') {
-                    loadNotices();
-                }
             });
         });
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentSeatNumber');
-            localStorage.removeItem('studentGrade');
-            window.location.href = 'index.html';
-        });
-
-        // 햄버거 메뉴 클릭 이벤트
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
         });
 
-        // 페이지 로드 시 공지사항 불러오기
-        loadNotices();
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+
+        window.onload = () => {
+            loadNotices();
+        };
     </script>
 </body>
 </html>
