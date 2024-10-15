@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출결 현황</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+            flex-wrap: wrap;
+            position: relative; /* 햄버거 메뉴 위치 조정 */
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        #student-info {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            white-space: nowrap;
+        }
+        #logout-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #home-icon {
+            font-size: 24px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        .separator {
+            border-left: 1px solid #333;
+            height: 20px;
+            margin: 0 5px;
+        }
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
+            border-radius: 5px; /* 메뉴 모서리 둥글게 */
+        }
+        #mobile-menu a {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            text-align: center; /* 가운데 정렬 */
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+        }
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+            nav {
+                display: none; /* PC에서는 숨김 */
+            }
+            .hamburger {
+                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
+            }
+            #mobile-menu {
+                display: none; /* 모바일 메뉴 기본적으로 숨김 */
+            }
+            #mobile-menu.active {
+                display: flex; /* 활성화된 모바일 메뉴 표시 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- "집" 모양 아이콘 -->
+        <a href="student-dashboard.html" id="home-icon">🏠</a>
+
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <nav>
+            <a href="#menu1">메뉴1</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </nav>
+
+        <div id="mobile-menu">
+            <a href="#menu1">메뉴1</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </div>
+
+        <div id="student-info">
+            <span id="seatNameDisplay"></span>
+            <div class="separator"></div>
+            <span id="nameDisplay"></span>
+            <div class="separator"></div>
+            <span id="gradeDisplay"></span>
+            <button id="logout-btn">로그아웃</button>
+        </div>
+    </header>
+
+    <h1>출결 현황</h1>
+    <p>출결 현황 내용이 여기에 표시됩니다.</p>
+
+    <script>
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
+
+        if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
