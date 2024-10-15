@@ -174,13 +174,10 @@
 
     <h1>출결현황</h1>
 
-    <div>
+    <div id="attendance-content">
         <label for="date-picker">날짜 선택:</label>
         <input type="date" id="date-picker" />
         <button id="fetch-btn">출결 데이터 가져오기</button>
-    </div>
-
-    <div id="attendance-content">
         <table id="attendance-table">
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
@@ -202,7 +199,7 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate) {
+        async function fetchAttendanceData() {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -213,7 +210,15 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
-                tableBody.innerHTML = ''; // 이전 데이터 초기화
+
+                // 첫 번째 행(헤더) 추가
+                const headerRow = document.createElement('tr');
+                data.values[0].forEach(cell => {
+                    const th = document.createElement('th');
+                    th.textContent = cell;
+                    headerRow.appendChild(th);
+                });
+                tableBody.appendChild(headerRow);
 
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
@@ -244,34 +249,12 @@
                         tableBody.appendChild(tr);
                     }
                 });
-
-                // 두 번째 행도 항상 추가 (index 1) - 수정 필요
-                if (data.values.length > 1) {
-                    const secondRow = data.values[1];
-                    const tr = document.createElement('tr');
-                    secondRow.forEach(cell => {
-                        const td = document.createElement('td');
-                        td.textContent = cell;
-                        tr.appendChild(td);
-                    });
-                    tableBody.appendChild(tr);
-                }
-            } else {
-                console.error('No data found in the sheet.');
             }
         }
 
-        // 날짜 선택 버튼 클릭 시
-        document.getElementById('fetch-btn').addEventListener('click', () => {
-            const selectedDate = document.getElementById('date-picker').value;
-            if (selectedDate) {
-                fetchAttendanceData(selectedDate);
-            } else {
-                alert('날짜를 선택하세요.');
-            }
-        });
-
-        // 햄버거 메뉴 토글
+        document.getElementById('fetch-btn').addEventListener('click', fetchAttendanceData);
+        
+        // 햄버거 메뉴 클릭 이벤트
         document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('active');
         });
