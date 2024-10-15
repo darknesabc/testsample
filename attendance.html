@@ -108,18 +108,6 @@
         .absent {
             background-color: #f4cccc; /* 연한 빨간색 */
         }
-        /* 날짜 선택 스타일 */
-        #date-picker {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #date-picker input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -186,12 +174,6 @@
 
     <h1>출결현황</h1>
 
-    <!-- 날짜 선택 칸 추가 -->
-    <div id="date-picker">
-        <label for="attendance-date">날짜 선택:</label>
-        <input type="date" id="attendance-date" name="attendance-date">
-    </div>
-
     <div id="attendance-content">
         <table id="attendance-table">
             <tbody>
@@ -223,62 +205,88 @@
             const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
             const data = await response.json();
             
-            if (data.values && data.values.length > 1) { // 데이터가 2행 이상인지 확인
+            if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
 
-                // 두 번째 행(출결 데이터) 추가
-                const secondRow = data.values[1]; // 두 번째 행 가져오기
-                const tr = document.createElement('tr');
+                // 첫 번째 행(헤더) 추가
+                const headerRow = document.createElement('tr');
+                data.values[0].forEach(cell => {
+                    const th = document.createElement('th');
+                    th.textContent = cell;
+                    headerRow.appendChild(th);
+                });
+                tableBody.appendChild(headerRow);
 
-                secondRow.forEach((cell, index) => {
-                    const td = document.createElement('td');
+                data.values.forEach((row, rowIndex) => {
+                    const seatNumber = row[0]; // 자리번호 (A열)
+                    const name = row[1]; // 이름 (B열)
 
                     // 자리번호와 이름이 매칭될 경우에만 표시
-                    if (index === 0 && cell === studentSeatNumber) {
-                        td.textContent = cell;
-                    } else if (index === 1 && cell === studentName) {
-                        td.textContent = cell;
-                    } else {
-                        // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
-                        if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                            if (cell === '1') {
-                                td.className = 'present';
-                                td.textContent = '출석'; // '출석' 표시
-                            } else if (cell === '3') {
-                                td.className = 'absent';
-                                td.textContent = '결석'; // '결석' 표시
+                    if (seatNumber === studentSeatNumber && name === studentName) {
+                        const tr = document.createElement('tr');
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
+
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
                             } else {
-                                td.textContent = ''; // 출석 상태가 아닌 경우 빈 문자열
+                                td.textContent = cell;
                             }
-                        } else {
-                            td.textContent = cell; // 나머지 열은 그대로 표시
-                        }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
                     }
 
-                    tr.appendChild(td);
-                });
+                    // 두 번째 행도 항상 추가
+                    if (rowIndex === 1) {
+                        const tr = document.createElement('tr');
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
 
-                tableBody.appendChild(tr); // 두 번째 행 추가
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present');
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent');
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    }
+                });
             }
         }
 
-        fetchAttendanceData();
-
-        // 햄버거 메뉴 열기 및 닫기
-        const hamburger = document.getElementById('hamburger');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        hamburger.addEventListener('click', () => {
+        // 햄버거 메뉴 토글 기능
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
         });
 
-        // 로그아웃 버튼 클릭 시 처리
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentSeatNumber');
-            localStorage.removeItem('studentGrade');
-            window.location.href = 'index.html'; // 로그인 페이지로 리디렉션
+            localStorage.clear();
+            window.location.href = 'index.html';
         });
+
+        // 페이지 로드 시 데이터 가져오기
+        window.onload = fetchAttendanceData;
     </script>
 </body>
 </html>
