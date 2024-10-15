@@ -182,6 +182,18 @@
 
     <div id="attendance-content">
         <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>자리번호</th>
+                    <th>이름</th>
+                    <th>담임</th>
+                    <th>학년</th>
+                    <th>교시</th>
+                    <th>요일</th>
+                    <th>날짜</th>
+                    <th>출석상태</th>
+                </tr>
+            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -192,6 +204,7 @@
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
         const studentGrade = localStorage.getItem('studentGrade');
+        const studentHomeroom = localStorage.getItem('studentHomeroom'); // 담임 추가
 
         if (studentName) {
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
@@ -218,45 +231,57 @@
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
+                    const homeroom = row[2]; // 담임 (C열)
+                    const grade = row[3]; // 학년 (D열)
+                    const period = row[4]; // 교시 (E열)
+                    const dayOfWeek = row[5]; // 요일 (F열)
+                    const date = row[6]; // 날짜 (G열)
 
                     // 자리번호와 이름이 매칭될 경우에만 표시
                     if (seatNumber === studentSeatNumber && name === studentName) {
                         const tr = document.createElement('tr');
 
-                        // 날짜가 선택된 경우
+                        // 기본 데이터 추가
+                        tr.innerHTML = `
+                            <td>${seatNumber}</td>
+                            <td>${name}</td>
+                            <td>${homeroom}</td>
+                            <td>${grade}</td>
+                            <td>${period}</td>
+                            <td>${dayOfWeek}</td>
+                            <td>${date}</td>
+                        `;
+
+                        // 선택된 날짜와 매칭되는 출석 상태 추가
                         if (selectedDate) {
-                            // 선택된 날짜에 해당하는 열 처리 (여기서는 예시로 G열 (6) 사용)
-                            const dateIndex = 6; // 예시로 G열의 인덱스
-                            const cellValue = row[dateIndex];
+                            const attendanceStatus = row[7]; // 출석 상태 (H열)
                             const td = document.createElement('td');
 
-                            if (cellValue === '1') {
+                            if (attendanceStatus === '1') {
                                 td.textContent = '출석';
-                                td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                            } else if (cellValue === '3') {
+                                td.classList.add('present');
+                            } else if (attendanceStatus === '3') {
                                 td.textContent = '결석';
-                                td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                td.classList.add('absent');
                             } else {
-                                td.textContent = '미제출'; // 출석/결석 이외의 경우
+                                td.textContent = '미제출';
                             }
                             tr.appendChild(td);
                         } else {
-                            // 날짜가 선택되지 않았을 경우 최신 데이터 표시
-                            const latestAttendance = row.slice(6); // G, I, K, M, O, Q, S 열의 데이터
-                            latestAttendance.forEach((attendance) => {
-                                const td = document.createElement('td');
+                            // 날짜 선택이 없는 경우 기본 출석 상태를 보여줌
+                            const attendanceStatus = row[7]; // 출석 상태 (H열)
+                            const td = document.createElement('td');
 
-                                if (attendance === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present');
-                                } else if (attendance === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent');
-                                } else {
-                                    td.textContent = '미제출';
-                                }
-                                tr.appendChild(td);
-                            });
+                            if (attendanceStatus === '1') {
+                                td.textContent = '출석';
+                                td.classList.add('present');
+                            } else if (attendanceStatus === '3') {
+                                td.textContent = '결석';
+                                td.classList.add('absent');
+                            } else {
+                                td.textContent = '미제출';
+                            }
+                            tr.appendChild(td);
                         }
 
                         tableBody.appendChild(tr); // 테이블에 행 추가
@@ -271,7 +296,12 @@
         // 날짜 선택 시 해당 데이터 표시
         document.getElementById('date').addEventListener('change', (event) => {
             const selectedDate = event.target.value;
-            fetchAttendanceData(selectedDate);
+            if (selectedDate) {
+                fetchAttendanceData(selectedDate);
+            } else {
+                // 선택이 취소된 경우 기존 데이터 표시
+                fetchAttendanceData();
+            }
         });
 
         // 햄버거 메뉴 기능
