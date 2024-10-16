@@ -13,45 +13,198 @@
             box-sizing: border-box;
         }
         header {
-            display: none; /* 헤더 숨기기 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+            flex-wrap: wrap;
+            position: relative; /* 햄버거 메뉴 위치 조정 */
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        #student-info {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            white-space: nowrap;
+        }
+        #logout-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #welcome {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .separator {
+            border-left: 1px solid #333;
+            height: 20px;
+            margin: 0 5px;
+        }
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
+            border-radius: 5px; /* 메뉴 모서리 둥글게 */
+        }
+        #mobile-menu a {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            text-align: center; /* 가운데 정렬 */
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .active {
+            background-color: #ddd;
+        }
+        #content {
+            padding: 10px; /* 콘텐츠 패딩 추가 */
         }
         #attendance-content {
             padding: 10px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        /* 반응형 이미지 스타일 */
+        #timetable-content img, #grades-content img {
+            max-width: 100%; /* 부모 요소 너비에 맞게 */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f0f0f0;
+
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+            nav {
+                display: none; /* PC에서는 숨김 */
+            }
+            .hamburger {
+                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
+            }
+            #mobile-menu {
+                display: none; /* 모바일 메뉴 기본적으로 숨김 */
+            }
+            #mobile-menu.active {
+                display: flex; /* 활성화된 모바일 메뉴 표시 */
+            }
+            #content {
+                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
+            }
         }
     </style>
 </head>
 <body>
+    <header>
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a> <!-- 흰색 집 아이콘 -->
+        
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <nav>
+            <a href="attendance.html">출결현황</a> <!-- 출결현황 링크 -->
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </nav>
+
+        <div id="mobile-menu">
+            <a href="attendance.html">출결현황</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </div>
+
+        <div id="student-info">
+            <span id="seatNameDisplay"></span>
+            <div class="separator"></div>
+            <span id="nameDisplay"></span>
+            <div class="separator"></div>
+            <span id="gradeDisplay"></span>
+            <button id="logout-btn">로그아웃</button>
+        </div>
+    </header>
+
     <h1>출결현황</h1>
 
-    <div id="attendance-content">
-        <table>
-            <tbody id="attendance-data">
-                <!-- 출결 데이터가 여기에 표시됩니다. -->
-            </tbody>
-        </table>
+    <div id="content">
+        <div id="attendance-content">
+            <p>출결현황 내용이 여기에 표시됩니다.</p>
+        </div>
     </div>
 
     <script>
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
 
         if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+            
             fetchAttendanceData();
         } else {
             window.location.href = 'index.html';
         }
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
 
         // 출결 데이터 가져오기
         function fetchAttendanceData() {
@@ -65,44 +218,30 @@
                 .then(response => response.json())
                 .then(data => {
                     const rows = data.values; // 시트의 모든 데이터 가져오기
-                    const attendanceData = document.getElementById('attendance-data');
-                    attendanceData.innerHTML = ''; // 이전 데이터 초기화
-
                     if (rows) {
-                        // 2행을 항상 표시
-                        const secondRowHtml = `
-                            <tr>
-                                <td>${rows[1][0]}</td>
-                                <td>${rows[1][1]}</td>
-                                <td>${rows[1][2]}</td>
-                                <td>${rows[1][3]}</td>
-                                <td>${rows[1][4]}</td>
-                            </tr>
-                        `;
-                        attendanceData.innerHTML += secondRowHtml; // 두 번째 행 추가
+                        const studentData = rows.find(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
+                        if (studentData) {
+                            // A열부터 E열까지의 데이터 표시
+                            const displayData = `자리번호: ${studentData[0]}, 이름: ${studentData[1]}, 담임: ${studentData[2]}, 학년: ${studentData[3]}, 교시: ${studentData[4]}`;
+                            document.getElementById('attendance-content').innerText = displayData;
 
-                        // 모든 교시에 대해 데이터 표시
-                        rows.forEach((row, index) => {
-                            if (index > 1 && row[1] === studentName && row[0] === studentSeatNumber) { // 첫 두 행은 제외하고 자리번호와 이름으로 필터링
-                                const studentRowHtml = `
-                                    <tr>
-                                        <td>${row[0]}</td>
-                                        <td>${row[1]}</td>
-                                        <td>${row[2]}</td>
-                                        <td>${row[3]}</td>
-                                        <td>${row[4]}</td>
-                                    </tr>
-                                `;
-                                attendanceData.innerHTML += studentRowHtml; // 매칭된 데이터 추가
-                            }
-                        });
+                            // 두 번째 스토리지에 A열부터 S열까지의 데이터 저장
+                            const secondStorage = {};
+                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
+                            keys.forEach((key, index) => {
+                                secondStorage[key] = studentData[index];
+                            });
+                            localStorage.setItem('attendanceData', JSON.stringify(secondStorage));
+                        } else {
+                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.'; // 학생 데이터가 없을 경우 메시지
+                        }
                     } else {
-                        attendanceData.innerHTML = '<tr><td colspan="5">출결 데이터가 없습니다.</td></tr>'; // 데이터가 없을 경우 메시지
+                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 데이터 로드 실패 메시지
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching attendance data:', error);
-                    document.getElementById('attendance-content').innerText = '출결 데이터 로드 중 오류가 발생했습니다.'; // 오류 메시지
+                    console.error('Error fetching data:', error);
+                    document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 오류 메시지
                 });
         }
     </script>
