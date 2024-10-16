@@ -175,14 +175,11 @@
 
     <h1>출결현황</h1>
 
-    <!-- 날짜 선택기 추가 -->
-    <div id="date-picker">
-        <label for="dateInput">날짜 선택: </label>
-        <input type="date" id="dateInput">
-    </div>
-    <div id="selectedDateDisplay"></div>
-
     <div id="content">
+        <div>
+            <input type="date" id="date-picker" />
+            <div id="selected-date"></div> <!-- 선택된 날짜 표시 -->
+        </div>
         <div id="attendance-content">
             <p>출결현황 내용이 여기에 표시됩니다.</p>
         </div>
@@ -211,22 +208,22 @@
             window.location.href = 'index.html';
         });
 
-        // 날짜 선택기 기능
-        document.getElementById('dateInput').addEventListener('change', function() {
+        // 날짜 선택기 및 표시
+        document.getElementById('date-picker').addEventListener('change', function () {
             const selectedDate = new Date(this.value);
-            const options = { weekday: 'long', month: 'numeric', day: 'numeric' };
-            const formattedDate = selectedDate.toLocaleDateString('ko-KR', options);
+            const options = { weekday: 'long' }; // 요일 옵션
+            const weekday = selectedDate.toLocaleDateString('ko-KR', options); // 요일 가져오기
 
-            // 요일과 날짜를 형식에 맞게 변환
-            const [weekday, month, day] = formattedDate.split(' ');
+            // 요일의 첫 글자만 가져오기
+            const firstLetter = weekday.charAt(0); 
 
-            // 요일의 첫 글자만 표시
-            const shortWeekday = weekday.charAt(0);
-            // 한자리의 경우 한자리로 표시
-            const shortMonth = month.replace(/^0+/, '');
-            const shortDay = day.replace(/^0+/, '');
+            // 월과 일 가져오기
+            const month = selectedDate.getMonth() + 1; // 월은 0부터 시작하므로 +1
+            const day = selectedDate.getDate();
 
-            document.getElementById('selectedDateDisplay').innerText = `선택한 날짜: ${shortWeekday} ${shortMonth}/${shortDay}`;
+            // 한 자리 숫자는 0을 제외하고 출력
+            const formattedDate = `${firstLetter} ${month}/${day}`;
+            document.getElementById('selected-date').innerText = formattedDate; // 선택된 날짜 표시
         });
     </script>
 </body>
