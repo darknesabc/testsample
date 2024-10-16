@@ -240,6 +240,14 @@
             fetchAttendanceData(event.target.value);
         });
 
+        // 날짜 형식을 MM/DD로 변환하는 함수
+        function getFormattedDate(dateString) {
+            const date = new Date(dateString);
+            const month = date.getMonth() + 1; // 0부터 시작하므로 1을 더함
+            const day = date.getDate();
+            return `${month}/${day}`;
+        }
+
         // 출결 데이터 가져오기
         function fetchAttendanceData(selectedDate = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
@@ -257,9 +265,11 @@
 
                     if (rows) {
                         const studentData = rows.filter(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
+                        const selectedFormattedDate = getFormattedDate(selectedDate);
+
                         const filteredData = studentData.filter(data => {
-                            const dateIndex = getDateIndex(data[4]);
-                            return selectedDate === '' || (dateIndex >= 0 && data[dateIndex] === selectedDate);
+                            const dateIndex = getDateIndex(data); // 날짜 인덱스를 구함
+                            return selectedFormattedDate === '' || (dateIndex >= 0 && data[dateIndex] === selectedFormattedDate);
                         });
 
                         if (filteredData.length > 0) {
@@ -279,18 +289,15 @@
                             row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>';
                             attendanceTableBody.appendChild(row);
                         }
-                    } else {
-                        const row = document.createElement('tr');
-                        row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>';
-                        attendanceTableBody.appendChild(row);
                     }
-                });
+                })
+                .catch(error => console.error('Error fetching attendance data:', error));
         }
 
-        // 날짜 인덱스 찾기
-        function getDateIndex(date) {
-            const dateColumns = ['G', 'I', 'K', 'M', 'O', 'Q', 'S'];
-            return dateColumns.indexOf(date);
+        // 날짜 인덱스를 구하는 함수 (요일에 따라)
+        function getDateIndex(data) {
+            const dayOfWeek = new Date().getDay(); // 요일
+            return dayOfWeek * 2 + 4; // G, I, K, M, O, Q, S 컬럼과 매칭
         }
     </script>
 </body>
