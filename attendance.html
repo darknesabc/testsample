@@ -249,58 +249,82 @@
                             const dateIndex = index % 2 === 0 ? index + 1 : index; // 날짜 인덱스
                             const isPresent = cell === '1';
                             const isAbsent = cell === '3';
-                            
-                            attendanceData[seatNumber].attendance[`Day${Math.floor(index / 2) + 1}`] = {
-                                date: weekdaysAndDates[dateIndex],
-                                status: isPresent ? '출석' : isAbsent ? '결석' : '미입력',
-                            };
+
+                            // 출결 상태 추가
+                            attendanceData[seatNumber].attendance[dateIndex] = isPresent ? '출석' : isAbsent ? '결석' : '';
                         });
                         
-                        // 테이블에 데이터 추가
-                        row.forEach((cell) => {
-                            const td = document.createElement('td');
-                            td.textContent = cell;
-                            // 출석 상태에 따라 클래스 추가
-                            if (cell === '1') {
-                                td.classList.add('present');
-                            } else if (cell === '3') {
-                                td.classList.add('absent');
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    }
+                        // 데이터 행 추가
+                        tr.innerHTML = `
+                            <td>${seatNumber}</td>
+                            <td>${name}</td>
+                            <td>${teacher}</td>
+                            <td>${grade}</td>
+                            <td>${period}</td>
+                        `;
 
-                    // 두 번째 행도 항상 추가
-                    if (rowIndex === 1) {
-                        const tr = document.createElement('tr');
-                        row.forEach(cell => {
-                            const td = document.createElement('td');
-                            td.textContent = cell;
-                            tr.appendChild(td);
+                        weekdaysAndDates.forEach((cell, index) => {
+                            const dateStatus = attendanceData[seatNumber].attendance[index + 1];
+                            const tdClass = dateStatus === '출석' ? 'present' : dateStatus === '결석' ? 'absent' : '';
+                            tr.innerHTML += `<td class="${tdClass}">${dateStatus}</td>`;
                         });
+
                         tableBody.appendChild(tr);
                     }
                 });
-
-                // sessionStorage에 전체 데이터 저장
+                
+                // sessionStorage에 전체 출결 데이터 저장
                 sessionStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+            } else {
+                console.error('출결 데이터가 없습니다.');
             }
         }
 
         // 페이지 로드 시 출결 데이터 가져오기
         window.onload = fetchAttendanceData;
 
-        // 햄버거 메뉴 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
+        // 날짜 선택 시 필터링
+        document.getElementById('date').addEventListener('change', (event) => {
+            const selectedDate = event.target.value;
+
+            // sessionStorage에서 출결 데이터 가져오기
+            const attendanceData = JSON.parse(sessionStorage.getItem('attendanceData'));
+
+            // 날짜에 맞는 출결 데이터 필터링
+            const tableBody = document.querySelector('#attendance-table tbody');
+            tableBody.innerHTML = ''; // 기존 데이터 초기화
+
+            for (const seatNumber in attendanceData) {
+                const rowData = attendanceData[seatNumber];
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${seatNumber}</td>
+                    <td>${rowData.name}</td>
+                    <td>${rowData.teacher}</td>
+                    <td>${rowData.grade}</td>
+                    <td>${rowData.period}</td>
+                `;
+
+                // 해당 날짜에 대한 출결 상태 추가
+                const dateStatus = rowData.attendance[selectedDate];
+                const tdClass = dateStatus === '출석' ? 'present' : dateStatus === '결석' ? 'absent' : '';
+                tr.innerHTML += `<td class="${tdClass}">${dateStatus || ''}</td>`;
+                
+                tableBody.appendChild(tr);
+            }
         });
 
-        // 로그아웃 버튼 클릭 시 처리
+        // 햄버거 메뉴 클릭 시
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active'); // 메뉴 활성화/비활성화
+        });
+
+        // 로그아웃 버튼 클릭 시
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear(); // 로컬스토리지 초기화
-            sessionStorage.clear(); // 세션스토리지 초기화
+            localStorage.clear(); // 로컬 저장소 초기화
+            sessionStorage.clear(); // 세션 저장소 초기화
             window.location.href = 'index.html'; // 로그인 페이지로 이동
         });
     </script>
