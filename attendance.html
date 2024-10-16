@@ -19,7 +19,7 @@
             background-color: #f0f0f0;
             padding: 10px;
             flex-wrap: wrap;
-            position: relative;
+            position: relative; /* 햄버거 메뉴 위치 조정 */
         }
         nav {
             display: flex;
@@ -65,14 +65,14 @@
             left: 0;
             right: 0;
             z-index: 10;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
+            border-radius: 5px; /* 메뉴 모서리 둥글게 */
         }
         #mobile-menu a {
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
-            text-align: center;
+            text-align: center; /* 가운데 정렬 */
         }
         .hamburger {
             display: none;
@@ -85,33 +85,36 @@
             height: 3px;
             background-color: #333;
         }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .active {
+            background-color: #ddd;
+        }
+        #content {
+            padding: 10px; /* 콘텐츠 패딩 추가 */
+        }
         #attendance-content {
             padding: 10px;
         }
-        #attendance-table {
-            width: 100%;
-            border-collapse: collapse; /* 테두리 겹침 방지 */
+
+        /* 반응형 이미지 스타일 */
+        #timetable-content img, #grades-content img {
+            max-width: 100%; /* 부모 요소 너비에 맞게 */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
         }
-        #attendance-table th,
-        #attendance-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-            white-space: nowrap; /* 텍스트를 한 줄로 유지 */
-            overflow: hidden; /* 넘치는 텍스트 숨김 */
-            text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
-        }
-        /* 출석 상태에 따른 배경색 */
-        .present {
-            background-color: #d4f4d7; /* 연한 초록색 */
-        }
-        .absent {
-            background-color: #f4cccc; /* 연한 빨간색 */
-        }
-        /* 날짜 선택기 스타일 */
-        #date-picker {
-            margin: 10px 0;
-        }
+
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
@@ -126,21 +129,15 @@
             #mobile-menu.active {
                 display: flex; /* 활성화된 모바일 메뉴 표시 */
             }
-            #attendance-table th, #attendance-table td {
-                font-size: 14px; /* 모바일에서 글자 크기 조정 */
-            }
-        }
-
-        @media (min-width: 768px) and (max-width: 1024px) {
-            #attendance-table th, #attendance-table td {
-                font-size: 16px; /* 태블릿에서 글자 크기 조정 */
+            #content {
+                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a> <!-- 흰색 집 아이콘 -->
         
         <div class="hamburger" id="hamburger">
             <div></div>
@@ -149,7 +146,7 @@
         </div>
 
         <nav>
-            <a href="attendance.html">출결현황</a>
+            <a href="attendance.html">출결현황</a> <!-- 출결현황 링크 -->
             <a href="#menu2">메뉴2</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -178,18 +175,10 @@
 
     <h1>출결현황</h1>
 
-    <!-- 날짜 선택기 추가 -->
-    <div id="date-picker">
-        <label for="date">날짜 선택:</label>
-        <input type="date" id="date" />
-    </div>
-
-    <div id="attendance-content">
-        <table id="attendance-table">
-            <tbody>
-                <!-- 출결 데이터가 여기에 추가됩니다. -->
-            </tbody>
-        </table>
+    <div id="content">
+        <div id="attendance-content">
+            <p>출결현황 내용이 여기에 표시됩니다.</p>
+        </div>
     </div>
 
     <script>
@@ -205,127 +194,14 @@
             window.location.href = 'index.html';
         }
 
-        // 출결 데이터 가져오기
-        async function fetchAttendanceData() {
-            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
-            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
-            const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
-
-            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
-            const data = await response.json();
-            
-            if (data.values && data.values.length > 0) {
-                const tableBody = document.querySelector('#attendance-table tbody');
-                
-                // 기존 데이터 초기화
-                tableBody.innerHTML = ''; // 테이블 내용 초기화
-
-                // sessionStorage에 데이터 저장
-                const attendanceData = {};
-                
-                data.values.forEach((row, rowIndex) => {
-                    const seatNumber = row[0]; // A열: 자리번호
-                    const name = row[1]; // B열: 이름
-                    const teacher = row[2]; // C열: 담임
-                    const grade = row[3]; // D열: 학년
-                    const period = row[4]; // E열: 교시
-                    const weekdaysAndDates = row.slice(5, 19); // F열~S열: 요일 및 날짜
-                    
-                    // 자리번호와 이름이 매칭될 경우에만 표시
-                    if (seatNumber === studentSeatNumber && name === studentName) {
-                        const tr = document.createElement('tr');
-                        
-                        // 모든 데이터를 sessionStorage에 저장
-                        attendanceData[seatNumber] = {
-                            name: name,
-                            teacher: teacher,
-                            grade: grade,
-                            period: period,
-                            attendance: {} // 출결 상태 저장을 위한 객체
-                        };
-                        
-                        // 요일과 날짜에 대한 출결 상태 저장
-                        weekdaysAndDates.forEach((cell, index) => {
-                            const dateIndex = index % 2 === 0 ? index + 1 : index; // 날짜 인덱스
-                            const isPresent = cell === '1';
-                            const isAbsent = cell === '3';
-
-                            // 출결 상태 추가
-                            attendanceData[seatNumber].attendance[dateIndex] = isPresent ? '출석' : isAbsent ? '결석' : '';
-                        });
-                        
-                        // 데이터 행 추가
-                        tr.innerHTML = `
-                            <td>${seatNumber}</td>
-                            <td>${name}</td>
-                            <td>${teacher}</td>
-                            <td>${grade}</td>
-                            <td>${period}</td>
-                        `;
-
-                        weekdaysAndDates.forEach((cell, index) => {
-                            const dateStatus = attendanceData[seatNumber].attendance[index + 1];
-                            const tdClass = dateStatus === '출석' ? 'present' : dateStatus === '결석' ? 'absent' : '';
-                            tr.innerHTML += `<td class="${tdClass}">${dateStatus}</td>`;
-                        });
-
-                        tableBody.appendChild(tr);
-                    }
-                });
-                
-                // sessionStorage에 전체 출결 데이터 저장
-                sessionStorage.setItem('attendanceData', JSON.stringify(attendanceData));
-            } else {
-                console.error('출결 데이터가 없습니다.');
-            }
-        }
-
-        // 페이지 로드 시 출결 데이터 가져오기
-        window.onload = fetchAttendanceData;
-
-        // 날짜 선택 시 필터링
-        document.getElementById('date').addEventListener('change', (event) => {
-            const selectedDate = event.target.value;
-
-            // sessionStorage에서 출결 데이터 가져오기
-            const attendanceData = JSON.parse(sessionStorage.getItem('attendanceData'));
-
-            // 날짜에 맞는 출결 데이터 필터링
-            const tableBody = document.querySelector('#attendance-table tbody');
-            tableBody.innerHTML = ''; // 기존 데이터 초기화
-
-            for (const seatNumber in attendanceData) {
-                const rowData = attendanceData[seatNumber];
-                const tr = document.createElement('tr');
-
-                tr.innerHTML = `
-                    <td>${seatNumber}</td>
-                    <td>${rowData.name}</td>
-                    <td>${rowData.teacher}</td>
-                    <td>${rowData.grade}</td>
-                    <td>${rowData.period}</td>
-                `;
-
-                // 해당 날짜에 대한 출결 상태 추가
-                const dateStatus = rowData.attendance[selectedDate];
-                const tdClass = dateStatus === '출석' ? 'present' : dateStatus === '결석' ? 'absent' : '';
-                tr.innerHTML += `<td class="${tdClass}">${dateStatus || ''}</td>`;
-                
-                tableBody.appendChild(tr);
-            }
-        });
-
-        // 햄버거 메뉴 클릭 시
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active'); // 메뉴 활성화/비활성화
+            mobileMenu.classList.toggle('active');
         });
 
-        // 로그아웃 버튼 클릭 시
         document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear(); // 로컬 저장소 초기화
-            sessionStorage.clear(); // 세션 저장소 초기화
-            window.location.href = 'index.html'; // 로그인 페이지로 이동
+            localStorage.clear();
+            window.location.href = 'index.html';
         });
     </script>
 </body>
