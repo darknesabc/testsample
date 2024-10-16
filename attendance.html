@@ -168,7 +168,8 @@
             <div class="separator"></div>
             <span id="nameDisplay"></span>
             <div class="separator"></div>
-            <span id="gradeDisplay"></span>
+            <!-- 학년 정보는 세션 스토리지에서 가져오지 않음 -->
+            <span id="gradeDisplay"></span> 
             <button id="logout-btn">로그아웃</button>
         </div>
     </header>
@@ -182,14 +183,16 @@
     </div>
 
     <script>
-        const studentName = localStorage.getItem('studentName');
-        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
-        const studentGrade = localStorage.getItem('studentGrade');
+        // 세션 스토리지에서 자리번호와 이름을 가져옵니다.
+        const studentSeatNumber = sessionStorage.getItem('studentSeatNumber');
+        const studentName = sessionStorage.getItem('studentName');
 
-        if (studentName) {
+        // 자리번호와 이름을 화면에 표시합니다.
+        if (studentSeatNumber) {
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+        }
+        if (studentName) {
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
-            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
             window.location.href = 'index.html';
         }
