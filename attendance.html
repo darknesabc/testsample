@@ -107,6 +107,18 @@
         #attendance-content {
             padding: 10px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 테이블 테두리 겹치기 방지 */
+        }
+        th, td {
+            border: 1px solid #ccc; /* 셀 테두리 추가 */
+            padding: 10px; /* 셀 안쪽 여백 */
+            text-align: center; /* 가운데 정렬 */
+        }
+        th {
+            background-color: #f0f0f0; /* 헤더 배경색 */
+        }
 
         /* 반응형 이미지 스타일 */
         #timetable-content img, #grades-content img {
@@ -177,7 +189,20 @@
 
     <div id="content">
         <div id="attendance-content">
-            <p>출결현황 내용이 여기에 표시됩니다.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>자리번호</th>
+                        <th>이름</th>
+                        <th>담임</th>
+                        <th>학년</th>
+                        <th>교시</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-data">
+                    <!-- 출결 데이터가 여기에 추가됩니다. -->
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -218,25 +243,38 @@
                 .then(response => response.json())
                 .then(data => {
                     const rows = data.values; // 시트의 모든 데이터 가져오기
-                    if (rows) {
-                        const studentData = rows.find(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
-                        if (studentData) {
-                            // A열부터 E열까지의 데이터 표시
-                            const displayData = `자리번호: ${studentData[0]}, 이름: ${studentData[1]}, 담임: ${studentData[2]}, 학년: ${studentData[3]}, 교시: ${studentData[4]}`;
-                            document.getElementById('attendance-content').innerText = displayData;
+                    const attendanceData = document.getElementById('attendance-data');
 
-                            // 두 번째 스토리지에 A열부터 S열까지의 데이터 저장
-                            const secondStorage = {};
-                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
-                            keys.forEach((key, index) => {
-                                secondStorage[key] = studentData[index];
-                            });
-                            localStorage.setItem('attendanceData', JSON.stringify(secondStorage));
-                        } else {
-                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.'; // 학생 데이터가 없을 경우 메시지
+                    if (rows) {
+                        // 2행 추가 (항상 표시)
+                        const secondRow = rows[1];
+                        const secondRowHtml = `
+                            <tr>
+                                <td>${secondRow[0] || ''}</td>
+                                <td>${secondRow[1] || ''}</td>
+                                <td>${secondRow[2] || ''}</td>
+                                <td>${secondRow[3] || ''}</td>
+                                <td>${secondRow[4] || ''}</td>
+                            </tr>
+                        `;
+                        attendanceData.innerHTML += secondRowHtml;
+
+                        // 학생 데이터 매칭
+                        const studentData = rows.find(row => row[1] === studentName && row[0] === studentSeatNumber);
+                        if (studentData) {
+                            const studentRowHtml = `
+                                <tr>
+                                    <td>${studentData[0]}</td>
+                                    <td>${studentData[1]}</td>
+                                    <td>${studentData[2]}</td>
+                                    <td>${studentData[3]}</td>
+                                    <td>${studentData[4]}</td>
+                                </tr>
+                            `;
+                            attendanceData.innerHTML += studentRowHtml; // 매칭된 데이터 추가
                         }
                     } else {
-                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 데이터 로드 실패 메시지
+                        attendanceData.innerHTML = '<tr><td colspan="5">출결 데이터가 없습니다.</td></tr>'; // 데이터가 없을 경우 메시지
                     }
                 })
                 .catch(error => {
