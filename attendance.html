@@ -175,6 +175,13 @@
 
     <h1>출결현황</h1>
 
+    <!-- 날짜 선택기 추가 -->
+    <div id="date-picker">
+        <label for="dateInput">날짜 선택: </label>
+        <input type="date" id="dateInput">
+    </div>
+    <div id="selectedDateDisplay"></div>
+
     <div id="content">
         <div id="attendance-content">
             <p>출결현황 내용이 여기에 표시됩니다.</p>
@@ -202,6 +209,24 @@
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
             window.location.href = 'index.html';
+        });
+
+        // 날짜 선택기 기능
+        document.getElementById('dateInput').addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const options = { weekday: 'long', month: 'numeric', day: 'numeric' };
+            const formattedDate = selectedDate.toLocaleDateString('ko-KR', options);
+
+            // 요일과 날짜를 형식에 맞게 변환
+            const [weekday, month, day] = formattedDate.split(' ');
+
+            // 요일의 첫 글자만 표시
+            const shortWeekday = weekday.charAt(0);
+            // 한자리의 경우 한자리로 표시
+            const shortMonth = month.replace(/^0+/, '');
+            const shortDay = day.replace(/^0+/, '');
+
+            document.getElementById('selectedDateDisplay').innerText = `선택한 날짜: ${shortWeekday} ${shortMonth}/${shortDay}`;
         });
     </script>
 </body>
