@@ -194,6 +194,68 @@
             window.location.href = 'index.html';
         }
 
+        // 출결 데이터 불러오기 및 두 번째 스토리지에 저장
+        const fetchAttendanceData = async () => {
+            try {
+                const response = await fetch('YOUR_API_ENDPOINT_HERE'); // Google Sheets API 호출
+                const data = await response.json(); // JSON 형태로 변환
+                
+                const attendanceData = data.values; // 데이터 값 가져오기
+                const secondStorage = {}; // 두 번째 스토리지 초기화
+
+                // 데이터 매핑 및 스토리지에 저장
+                attendanceData.forEach(row => {
+                    const seatNumber = row[0];
+                    const name = row[1];
+                    const homeroom = row[2];
+                    const grade = row[3];
+                    const lesson = row[4];
+                    const dayOfWeek1 = row[5];
+                    const date1 = row[6];
+                    const dayOfWeek2 = row[7];
+                    const date2 = row[8];
+                    const dayOfWeek3 = row[9];
+                    const date3 = row[10];
+                    const dayOfWeek4 = row[11];
+                    const date4 = row[12];
+                    const dayOfWeek5 = row[13];
+                    const date5 = row[14];
+                    const dayOfWeek6 = row[15];
+                    const date6 = row[16];
+                    const dayOfWeek7 = row[17];
+                    const date7 = row[18];
+
+                    // 두 번째 스토리지에 저장
+                    secondStorage[seatNumber] = {
+                        name: name,
+                        homeroom: homeroom,
+                        grade: grade,
+                        lessons: [
+                            { lesson, dayOfWeek: dayOfWeek1, date: date1 },
+                            { dayOfWeek: dayOfWeek2, date: date2 },
+                            { dayOfWeek: dayOfWeek3, date: date3 },
+                            { dayOfWeek: dayOfWeek4, date: date4 },
+                            { dayOfWeek: dayOfWeek5, date: date5 },
+                            { dayOfWeek: dayOfWeek6, date: date6 },
+                            { dayOfWeek: dayOfWeek7, date: date7 }
+                        ]
+                    };
+                });
+
+                // 자리번호와 이름 업데이트
+                if (secondStorage[studentSeatNumber]) {
+                    const matchedStudent = secondStorage[studentSeatNumber];
+                    document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+                    document.getElementById('nameDisplay').innerText = `이름: ${matchedStudent.name}`;
+                }
+
+            } catch (error) {
+                console.error('출결 데이터를 불러오는 중 오류가 발생했습니다:', error);
+            }
+        };
+
+        fetchAttendanceData();
+
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('active');
@@ -201,7 +263,7 @@
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = 'index.html'; // 로그아웃 후 로그인 페이지로 이동
         });
     </script>
 </body>
