@@ -190,6 +190,8 @@
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+            
+            fetchAttendanceData();
         } else {
             window.location.href = 'index.html';
         }
@@ -203,6 +205,45 @@
             localStorage.clear();
             window.location.href = 'index.html';
         });
+
+        // 출결 데이터 가져오기
+        function fetchAttendanceData() {
+            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY'; // Google Sheet ID
+            const sheetName = '출결'; // 시트 이름
+            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // API 키
+
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const rows = data.values; // 시트의 모든 데이터 가져오기
+                    if (rows) {
+                        const studentData = rows.find(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
+                        if (studentData) {
+                            // A열부터 E열까지의 데이터 표시
+                            const displayData = `자리번호: ${studentData[0]}, 이름: ${studentData[1]}, 담임: ${studentData[2]}, 학년: ${studentData[3]}, 교시: ${studentData[4]}`;
+                            document.getElementById('attendance-content').innerText = displayData;
+
+                            // 두 번째 스토리지에 A열부터 S열까지의 데이터 저장
+                            const secondStorage = {};
+                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
+                            keys.forEach((key, index) => {
+                                secondStorage[key] = studentData[index];
+                            });
+                            localStorage.setItem('attendanceData', JSON.stringify(secondStorage));
+                        } else {
+                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.';
+                        }
+                    } else {
+                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching attendance data:', error);
+                    document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 오류가 발생했습니다.';
+                });
+        }
     </script>
 </body>
 </html>
