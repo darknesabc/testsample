@@ -247,23 +247,29 @@
                     const matchedStudent = secondStorage[studentSeatNumber];
                     document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
                     document.getElementById('nameDisplay').innerText = `이름: ${matchedStudent.name}`;
+                    document.getElementById('gradeDisplay').innerText = `학년: ${matchedStudent.grade}`;
                 }
 
+                // 여기서 fetchAttendanceData()를 호출하여 데이터를 초기화할 수 있습니다.
             } catch (error) {
-                console.error('출결 데이터를 불러오는 중 오류가 발생했습니다:', error);
+                console.error('데이터 불러오는 중 오류 발생:', error);
             }
         };
 
         fetchAttendanceData();
 
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
+        // 햄버거 메뉴 토글 기능
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
         });
 
+        // 로그아웃 버튼 클릭 시 처리
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.clear();
-            window.location.href = 'index.html'; // 로그아웃 후 로그인 페이지로 이동
+            window.location.href = 'index.html'; // 로그아웃 후 index 페이지로 이동
         });
     </script>
 </body>
