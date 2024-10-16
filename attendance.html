@@ -13,41 +13,185 @@
             box-sizing: border-box;
         }
         header {
-            background-color: #f8f9fa;
-            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        #student-info {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            white-space: nowrap;
+        }
+        #logout-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #welcome {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .separator {
+            border-left: 1px solid #333;
+            height: 20px;
+            margin: 0 5px;
+        }
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #mobile-menu a {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
             text-align: center;
         }
-        h1 {
-            margin: 0;
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .active {
+            background-color: #ddd;
         }
         #content {
-            padding: 20px;
+            padding: 10px;
+        }
+        #attendance-content {
+            padding: 10px;
+            margin-top: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #f0f0f0;
+        }
+
+        /* 반응형 이미지 스타일 */
+        #timetable-content img, #grades-content img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            #mobile-menu {
+                display: none;
+            }
+            #mobile-menu.active {
+                display: flex;
+            }
+            #content {
+                padding: 5px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>출결현황</h1>
-        <input type="date" id="datePicker" />
-        <button id="fetch-btn">데이터 가져오기</button>
-        <!-- 기존 헤더 내용 -->
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
+        
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <nav>
+            <a href="attendance.html">출결현황</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </nav>
+
+        <div id="mobile-menu">
+            <a href="attendance.html">출결현황</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </div>
+
+        <div id="student-info">
+            <span id="seatNameDisplay"></span>
+            <div class="separator"></div>
+            <span id="nameDisplay"></span>
+            <div class="separator"></div>
+            <span id="gradeDisplay"></span>
+            <button id="logout-btn">로그아웃</button>
+        </div>
     </header>
+
+    <h1>출결현황</h1>
 
     <div id="content">
         <div id="attendance-content">
+            <label for="date-picker">날짜 선택:</label>
+            <input type="date" id="date-picker">
             <table id="attendance-table">
                 <thead>
                     <tr>
@@ -68,12 +212,36 @@
     </div>
 
     <script>
-        // 로그인한 학생 정보 (예시)
-        const studentSeatNumber = '1'; // 자리번호
-        const studentName = '홍길동'; // 이름
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
+
+        if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+            
+            fetchAttendanceData();
+        } else {
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('date-picker').addEventListener('change', (event) => {
+            fetchAttendanceData(event.target.value);
+        });
 
         // 출결 데이터 가져오기
-        function fetchAttendanceData(selectedDate) {
+        function fetchAttendanceData(selectedDate = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -88,13 +256,14 @@
                     attendanceTableBody.innerHTML = '';
 
                     if (rows) {
-                        const studentData = rows.filter(row => 
-                            row[1] === studentName && 
-                            row[0] === studentSeatNumber && 
-                            row.includes(selectedDate) // 선택한 날짜가 있는지 확인
-                        );
-                        if (studentData.length > 0) {
-                            studentData.forEach(data => {
+                        const studentData = rows.filter(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
+                        const filteredData = studentData.filter(data => {
+                            const dateIndex = getDateIndex(data[4]);
+                            return selectedDate === '' || (dateIndex >= 0 && data[dateIndex] === selectedDate);
+                        });
+
+                        if (filteredData.length > 0) {
+                            filteredData.forEach(data => {
                                 const row = document.createElement('tr');
                                 row.innerHTML = `
                                     <td>${data[0]}</td>
@@ -115,19 +284,14 @@
                         row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>';
                         attendanceTableBody.appendChild(row);
                     }
-                })
-                .catch(error => console.error('Error fetching data:', error));
+                });
         }
 
-        // 버튼 클릭 시 데이터 가져오기
-        document.getElementById('fetch-btn').addEventListener('click', () => {
-            const selectedDate = document.getElementById('datePicker').value;
-            if (selectedDate) {
-                fetchAttendanceData(selectedDate);
-            } else {
-                alert('날짜를 선택해 주세요.');
-            }
-        });
+        // 날짜 인덱스 찾기
+        function getDateIndex(date) {
+            const dateColumns = ['G', 'I', 'K', 'M', 'O', 'Q', 'S'];
+            return dateColumns.indexOf(date);
+        }
     </script>
 </body>
 </html>
