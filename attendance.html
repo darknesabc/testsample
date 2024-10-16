@@ -106,6 +106,19 @@
         }
         #attendance-content {
             padding: 10px;
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+        table {
+            width: 100%; /* 테이블 폭 100% */
+            border-collapse: collapse; /* 테이블 경계 겹침 제거 */
+        }
+        th, td {
+            border: 1px solid #ccc; /* 셀 경계 */
+            padding: 8px; /* 패딩 */
+            text-align: center; /* 중앙 정렬 */
+        }
+        th {
+            background-color: #f0f0f0; /* 헤더 배경색 */
         }
 
         /* 반응형 이미지 스타일 */
@@ -177,7 +190,22 @@
 
     <div id="content">
         <div id="attendance-content">
-            <p>출결현황 내용이 여기에 표시됩니다.</p>
+            <table id="attendance-table">
+                <thead>
+                    <tr>
+                        <th>자리번호</th>
+                        <th>이름</th>
+                        <th>담임</th>
+                        <th>학년</th>
+                        <th>교시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">출결 정보가 없습니다.</td> <!-- 기본 메시지 -->
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -218,31 +246,36 @@
                 .then(response => response.json())
                 .then(data => {
                     const rows = data.values; // 시트의 모든 데이터 가져오기
-                    if (rows) {
-                        const studentData = rows.find(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
-                        if (studentData) {
-                            // A열부터 E열까지의 데이터 표시
-                            const displayData = `자리번호: ${studentData[0]}, 이름: ${studentData[1]}, 담임: ${studentData[2]}, 학년: ${studentData[3]}, 교시: ${studentData[4]}`;
-                            document.getElementById('attendance-content').innerText = displayData;
+                    const attendanceTableBody = document.getElementById('attendance-table').querySelector('tbody');
+                    attendanceTableBody.innerHTML = ''; // 기존 테이블 내용 삭제
 
-                            // 두 번째 스토리지에 A열부터 S열까지의 데이터 저장
-                            const secondStorage = {};
-                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
-                            keys.forEach((key, index) => {
-                                secondStorage[key] = studentData[index];
+                    if (rows) {
+                        const studentData = rows.filter(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
+                        if (studentData.length > 0) {
+                            studentData.forEach(data => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${data[0]}</td> <!-- 자리번호 -->
+                                    <td>${data[1]}</td> <!-- 이름 -->
+                                    <td>${data[2]}</td> <!-- 담임 -->
+                                    <td>${data[3]}</td> <!-- 학년 -->
+                                    <td>${data[4]}</td> <!-- 교시 -->
+                                `;
+                                attendanceTableBody.appendChild(row);
                             });
-                            localStorage.setItem('attendanceData', JSON.stringify(secondStorage));
                         } else {
-                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.'; // 학생 데이터가 없을 경우 메시지
+                            // 필터링된 결과가 없으면 메시지 표시
+                            const row = document.createElement('tr');
+                            row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>';
+                            attendanceTableBody.appendChild(row);
                         }
                     } else {
-                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 데이터 로드 실패 메시지
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>'; // 기본 메시지
+                        attendanceTableBody.appendChild(row);
                     }
                 })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 오류 메시지
-                });
+                .catch(error => console.error('Error fetching data:', error));
         }
     </script>
 </body>
