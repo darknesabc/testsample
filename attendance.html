@@ -227,21 +227,21 @@
 
                             // 두 번째 스토리지에 A열부터 S열까지의 데이터 저장
                             const secondStorage = {};
-                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
+                            const keys = ['자리번호', '이름', '담임', '학년', '교시', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일', '날짜', '요일'];
                             keys.forEach((key, index) => {
                                 secondStorage[key] = studentData[index];
                             });
                             localStorage.setItem('attendanceData', JSON.stringify(secondStorage));
                         } else {
-                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.';
+                            document.getElementById('attendance-content').innerText = '출결 정보가 없습니다.'; // 학생 데이터가 없을 경우 메시지
                         }
                     } else {
-                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.';
+                        document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 데이터 로드 실패 메시지
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching attendance data:', error);
-                    document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 오류가 발생했습니다.';
+                    console.error('Error fetching data:', error);
+                    document.getElementById('attendance-content').innerText = '데이터를 불러오는 데 실패했습니다.'; // 오류 메시지
                 });
         }
     </script>
