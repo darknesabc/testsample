@@ -78,19 +78,13 @@
                             tr.appendChild(td);
                         });
 
-                        // 첫 번째 데이터 행(2행)을 숨기지 않도록 하고, 두 번째 데이터 행부터 표시
+                        // 첫 번째 데이터 행(1행) 숨기기
                         if (index === 0) {
-                            tbody.appendChild(tr); // 2행은 표시
-                        } else {
-                            tbody.appendChild(tr); // 3행 이후 데이터는 표시
+                            tr.style.display = 'none'; // 첫 번째 데이터 행(1행) 숨기기
                         }
-                    });
 
-                    // 첫 번째 데이터 행 숨기기 (1행)
-                    const firstDataRow = tbody.querySelector('tr');
-                    if (firstDataRow) {
-                        firstDataRow.style.display = 'none'; // 첫 번째 데이터 행 숨김
-                    }
+                        tbody.appendChild(tr); // 2행부터 계속 표시
+                    });
                 }
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
