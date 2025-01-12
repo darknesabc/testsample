@@ -198,6 +198,10 @@
             window.location.href = 'index.html';
         }
 
+        // 오늘 날짜 구하기
+        const today = new Date();
+        const todayDate = today.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
+
         // API 키와 스프레드시트 ID 설정
         const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // 본인의 API 키로 교체
         const spreadsheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
@@ -214,8 +218,8 @@
             const rows = data.values;
             const tableBody = document.querySelector("#attendance-table tbody");
             
-            // 자리번호와 이름이 매칭되는 데이터만 필터링
-            const filteredRows = rows.filter(row => row[0] == studentSeatNumber && row[1] == studentName);  // A열 (자리번호)와 B열 (이름) 매칭
+            // 자리번호와 이름이 매칭되고 오늘 날짜와 입력 날짜가 일치하는 데이터만 필터링
+            const filteredRows = rows.filter(row => row[0] == studentSeatNumber && row[1] == studentName && row[5] === todayDate);  // A열 (자리번호), B열 (이름), F열 (날짜) 매칭
             
             filteredRows.forEach(row => {
               const tr = document.createElement("tr");
