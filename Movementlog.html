@@ -230,7 +230,7 @@
 
                 // 자리번호와 이름이 매칭되는 데이터만 필터링
                 const filteredRows = rows.filter(row => 
-                    row[0] == studentSeatNumber && row[1] == studentName && row[5] == selectedDate);  // A열 (자리번호)와 B열 (이름), F열 (날짜) 매칭
+                    row[0] == studentSeatNumber && row[1] == studentName && row[4] == selectedDate);  // A열 (자리번호)와 B열 (이름), E열 (날짜) 매칭
                 
                 filteredRows.forEach(row => {
                   const tr = document.createElement("tr");
