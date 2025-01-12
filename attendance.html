@@ -3,302 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>출결현황</title>
+    <title>Google Sheets 데이터 가져오기</title>
     <style>
-        /* 기본 스타일 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 10px;
-            flex-wrap: wrap;
-            position: relative;
-        }
-        nav {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        #student-info {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            white-space: nowrap;
-        }
-        #logout-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #welcome {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        .separator {
-            border-left: 1px solid #333;
-            height: 20px;
-            margin: 0 5px;
-        }
-        #mobile-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #mobile-menu a {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .hamburger div {
-            width: 25px;
-            height: 3px;
-            background-color: #333;
-        }
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-        }
-        .active {
-            background-color: #ddd;
-        }
-        #content {
-            padding: 10px;
-        }
-        #attendance-content {
-            padding: 10px;
-            margin-top: 20px;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            margin: 20px 0;
+            font-size: 16px;
             text-align: center;
         }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
         th {
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
+            font-weight: bold;
         }
-
-        /* 반응형 이미지 스타일 */
-        #timetable-content img, #grades-content img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
-
-        /* 반응형 스타일 */
-        @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-            .hamburger {
-                display: flex;
-            }
-            #mobile-menu {
-                display: none;
-            }
-            #mobile-menu.active {
-                display: flex;
-            }
-            #content {
-                padding: 5px;
-            }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        caption {
+            font-size: 20px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
-        
-        <div class="hamburger" id="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
-        <nav>
-            <a href="attendance.html">출결현황</a>
-            <a href="#menu2">메뉴2</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </nav>
-
-        <div id="mobile-menu">
-            <a href="attendance.html">출결현황</a>
-            <a href="#menu2">메뉴2</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </div>
-
-        <div id="student-info">
-            <span id="seatNameDisplay"></span>
-            <div class="separator"></div>
-            <span id="nameDisplay"></span>
-            <div class="separator"></div>
-            <span id="gradeDisplay"></span>
-            <button id="logout-btn">로그아웃</button>
-        </div>
-    </header>
-
-    <h1>출결현황</h1>
-
-    <div id="content">
-        <div id="attendance-content">
-            <label for="date-picker">날짜 선택:</label>
-            <input type="date" id="date-picker">
-            <table id="attendance-table">
-                <thead>
-                    <tr>
-                        <th>자리번호</th>
-                        <th>이름</th>
-                        <th>담임</th>
-                        <th>학년</th>
-                        <th>교시</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="5">출결 정보가 없습니다.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <h1>Google Sheets 데이터</h1>
+    <table id="sheetTable">
+        <thead>
+            <tr>
+                <th>자리번호</th>
+                <th>이름</th>
+                <th>담임</th>
+                <th>학년</th>
+                <th>교시</th>
+                <th>1/6</th>
+                <th>1/7</th>
+                <th>1/8</th>
+                <th>1/9</th>
+                <th>1/10</th>
+                <th>1/11</th>
+                <th>1/12</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 데이터를 JavaScript로 동적으로 추가 -->
+        </tbody>
+    </table>
 
     <script>
-        const studentName = localStorage.getItem('studentName');
-        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
-        const studentGrade = localStorage.getItem('studentGrade');
+        // Google Sheets API Key
+        const API_KEY = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
+        
+        // Google Sheets ID와 시트 이름
+        const SHEET_ID = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
+        const SHEET_NAME = '출결';
 
-        if (studentName) {
-            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
-            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
-            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
-            
-            fetchAttendanceData();
-        } else {
-            window.location.href = 'index.html';
-        }
+        // API URL
+        const URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
+        // 데이터를 가져와 테이블에 추가하는 함수
+        async function loadSheetData() {
+            try {
+                const response = await fetch(URL);
+                const data = await response.json();
+                const rows = data.values; // 데이터 배열
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        });
+                if (rows && rows.length > 0) {
+                    const tbody = document.querySelector('#sheetTable tbody');
 
-        document.getElementById('date-picker').addEventListener('change', (event) => {
-            fetchAttendanceData(event.target.value);
-        });
-
-        // 날짜 형식을 MM/DD로 변환하는 함수
-        function getFormattedDate(dateString) {
-            const date = new Date(dateString);
-            const month = date.getMonth() + 1; // 0부터 시작하므로 1을 더함
-            const day = date.getDate();
-            return `${month}/${day}`;
-        }
-
-        // 출결 데이터 가져오기
-        function fetchAttendanceData(selectedDate = '') {
-            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
-            const sheetName = '출결';
-            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
-
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
-            
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const rows = data.values;
-                    const attendanceTableBody = document.getElementById('attendance-table').querySelector('tbody');
-                    attendanceTableBody.innerHTML = '';
-
-                    if (rows) {
-                        const studentData = rows.filter(row => row[1] === studentName && row[0] === studentSeatNumber); // 이름과 자리번호로 필터링
-                        const selectedFormattedDate = getFormattedDate(selectedDate);
-
-                        const filteredData = studentData.filter(data => {
-                            const dateIndex = getDateIndex(data); // 날짜 인덱스를 구함
-                            return selectedFormattedDate === '' || (dateIndex >= 0 && data[dateIndex] === selectedFormattedDate);
+                    // 각 행 데이터를 테이블에 추가
+                    rows.slice(1).forEach(row => { // 첫 번째 행은 헤더이므로 제외
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell || ''; // 빈 값 처리
+                            tr.appendChild(td);
                         });
-
-                        if (filteredData.length > 0) {
-                            filteredData.forEach(data => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-                                    <td>${data[0]}</td>
-                                    <td>${data[1]}</td>
-                                    <td>${data[2]}</td>
-                                    <td>${data[3]}</td>
-                                    <td>${data[4]}</td>
-                                `;
-                                attendanceTableBody.appendChild(row);
-                            });
-                        } else {
-                            const row = document.createElement('tr');
-                            row.innerHTML = '<td colspan="5">출결 정보가 없습니다.</td>';
-                            attendanceTableBody.appendChild(row);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error fetching attendance data:', error));
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+            }
         }
 
-        // 날짜 인덱스를 구하는 함수 (요일에 따라)
-        function getDateIndex(data) {
-            const dayOfWeek = new Date().getDay(); // 요일
-            return dayOfWeek * 2 + 4; // G, I, K, M, O, Q, S 컬럼과 매칭
-        }
+        // 페이지 로드 시 데이터 가져오기 실행
+        loadSheetData();
     </script>
 </body>
 </html>
