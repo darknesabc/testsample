@@ -57,8 +57,20 @@
                 if (rows && rows.length > 0) {
                     const tbody = document.querySelector('#sheetTable tbody');
 
-                    // 첫 번째 행(헤더) 제외하고 2행도 포함하여 추가
-                    rows.forEach(row => {
+                    // 첫 번째 행(헤더) 표시
+                    const headerRow = rows[0]; // 첫 번째 행을 헤더로 설정
+                    const thead = document.createElement('thead');
+                    const headerTr = document.createElement('tr');
+                    headerRow.forEach(cell => {
+                        const th = document.createElement('th');
+                        th.textContent = cell || ''; // 빈 값 처리
+                        headerTr.appendChild(th);
+                    });
+                    thead.appendChild(headerTr);
+                    document.querySelector('#sheetTable').insertBefore(thead, tbody); // 테이블에 헤더 추가
+
+                    // 두 번째 행부터 데이터 표시
+                    rows.slice(1).forEach(row => {
                         const tr = document.createElement('tr');
                         row.forEach(cell => {
                             const td = document.createElement('td');
@@ -67,6 +79,12 @@
                         });
                         tbody.appendChild(tr);
                     });
+
+                    // 첫 번째 데이터 행 숨기기
+                    const firstRow = tbody.querySelector('tr');
+                    if (firstRow) {
+                        firstRow.style.display = 'none'; // 첫 번째 데이터 행 숨김
+                    }
                 }
             } catch (error) {
                 console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
