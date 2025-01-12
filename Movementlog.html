@@ -171,3 +171,26 @@
             <button id="logout-btn">로그아웃</button>
         </div>
     </header>
+    
+    <h1>이동일지</h1>
+
+    <div id="attendance-content">
+        <table id="attendance-table">
+            <tbody>
+                <!-- 출결 데이터가 여기에 추가됩니다. -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
+
+        if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            window.location.href = 'index.html';
+        }
