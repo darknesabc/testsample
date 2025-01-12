@@ -180,6 +180,14 @@
         <input type="date" id="date-picker" value="" />
 
         <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>자리번호</th>
+                    <th>이름</th>
+                    <th>날짜</th>
+                    <th>출결 상태</th>
+                </tr>
+            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -236,7 +244,22 @@
         // 날짜 선택 기능 처리
         const datePicker = document.getElementById('date-picker');
         const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD 형식)
-        datePicker.value = today; // 기본값을 오늘 날짜로 설정
+        datePicker.value = today;
+
+        // 날짜에 맞는 출결 데이터를 표시
+        datePicker.addEventListener('change', (event) => {
+          const selectedDate = event.target.value;
+          console.log('선택된 날짜:', selectedDate);
+          // 날짜에 맞는 데이터를 필터링하거나 표시하는 로직 추가
+        });
+
+        // 햄버거 메뉴 클릭 시 메뉴 열기
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
     </script>
 </body>
 </html>
