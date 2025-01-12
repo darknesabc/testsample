@@ -214,8 +214,8 @@
             const rows = data.values;
             const tableBody = document.querySelector("#attendance-table tbody");
             
-            // 자리번호와 매칭되는 데이터만 필터링
-            const filteredRows = rows.filter(row => row[0] == studentSeatNumber);  // A열 (자리번호)와 학생 자리번호 매칭
+            // 자리번호와 이름이 매칭되는 데이터만 필터링
+            const filteredRows = rows.filter(row => row[0] == studentSeatNumber && row[1] == studentName);  // A열 (자리번호)와 B열 (이름) 매칭
             
             filteredRows.forEach(row => {
               const tr = document.createElement("tr");
