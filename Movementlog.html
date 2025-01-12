@@ -213,7 +213,11 @@
             // 가져온 데이터를 HTML에 표시하는 예시
             const rows = data.values;
             const tableBody = document.querySelector("#attendance-table tbody");
-            rows.forEach(row => {
+            
+            // 자리번호와 매칭되는 데이터만 필터링
+            const filteredRows = rows.filter(row => row[0] == studentSeatNumber);  // A열 (자리번호)와 학생 자리번호 매칭
+            
+            filteredRows.forEach(row => {
               const tr = document.createElement("tr");
               row.forEach(cell => {
                 const td = document.createElement("td");
