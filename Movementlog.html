@@ -175,6 +175,10 @@
     <h1>이동일지</h1>
 
     <div id="attendance-content">
+        <!-- 날짜 선택 입력 추가 -->
+        <label for="date-picker">날짜 선택:</label>
+        <input type="date" id="date-picker" value="" />
+
         <table id="attendance-table">
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
@@ -228,6 +232,11 @@
             });
           })
           .catch(error => console.error('Error fetching data:', error));
+
+        // 날짜 선택 기능 처리
+        const datePicker = document.getElementById('date-picker');
+        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD 형식)
+        datePicker.value = today; // 기본값을 오늘 날짜로 설정
     </script>
 </body>
 </html>
