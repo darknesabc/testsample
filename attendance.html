@@ -70,20 +70,14 @@
                     document.querySelector('#sheetTable').insertBefore(thead, tbody); // 테이블에 헤더 추가
 
                     // 두 번째 행부터 데이터 표시
-                    rows.slice(1).forEach((row, index) => {
+                    rows.slice(1).forEach((row) => {
                         const tr = document.createElement('tr');
                         row.forEach(cell => {
                             const td = document.createElement('td');
                             td.textContent = cell || ''; // 빈 값 처리
                             tr.appendChild(td);
                         });
-
-                        // 첫 번째 데이터 행(1행) 숨기기
-                        if (index === 0) {
-                            tr.style.display = 'none'; // 첫 번째 데이터 행(1행) 숨기기
-                        }
-
-                        tbody.appendChild(tr); // 2행부터 계속 표시
+                        tbody.appendChild(tr); // 모든 행 표시
                     });
                 }
             } catch (error) {
