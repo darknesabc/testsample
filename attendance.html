@@ -5,16 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Sheets 데이터 가져오기</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #007BFF;
+            color: white;
+            margin: 0;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 20px auto;
             font-size: 16px;
             text-align: center;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
+            text-align: center;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -26,6 +42,40 @@
             font-size: 20px;
             margin-bottom: 10px;
         }
+
+        /* 모바일 환경 */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+            }
+            table {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 18px;
+                padding: 15px;
+            }
+        }
+
+        /* 태블릿 환경 */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            table {
+                font-size: 15px;
+            }
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        /* 데스크탑 환경 */
+        @media (min-width: 1025px) {
+            table {
+                width: 80%;
+                margin: 20px auto;
+                font-size: 16px;
+            }
+        }
+
     </style>
 </head>
 <body>
