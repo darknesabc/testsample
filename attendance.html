@@ -3,217 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets 데이터 가져오기</title>
+    <title>출결현황</title>
     <style>
+        /* 기본 스타일 */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
-        h1 {
-            text-align: center;
-            padding: 20px;
-            background-color: #007BFF;
-            color: white;
-            margin: 0;
-        }
-        /* 메뉴 스타일 */
-        nav {
-            background-color: #333;
-            overflow: hidden;
-        }
-        nav a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-        nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        /* 로그인 정보 표시 */
-        .user-info {
+        header {
             display: flex;
             justify-content: space-between;
-            background-color: #007BFF;
+            align-items: center;
+            background-color: #f0f0f0;
             padding: 10px;
-            color: white;
-            font-size: 16px;
+            flex-wrap: wrap;
+            position: relative;
         }
-        .user-info div {
-            margin: 0 10px;
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-        .logout-btn {
-            background-color: red;
-            padding: 10px 20px;
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        #student-info {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            white-space: nowrap;
+        }
+        #logout-btn {
+            background-color: #ff4d4d;
             color: white;
+            padding: 5px 10px;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            border-radius: 5px;
         }
-        .logout-btn:hover {
-            background-color: darkred;
+        #welcome {
+            font-size: 24px;
+            margin: 20px 0;
         }
-        /* 테이블 스타일 */
-        table {
+        .separator {
+            border-left: 1px solid #333;
+            height: 20px;
+            margin: 0 5px;
+        }
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #mobile-menu a {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+        }
+        #attendance-content {
+            padding: 10px;
+        }
+        #attendance-table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px auto;
-            font-size: 16px;
+            border-collapse: collapse; /* 테두리 겹침 방지 */
+        }
+        #attendance-table th,
+        #attendance-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
             text-align: center;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+            overflow: hidden; /* 넘치는 텍스트 숨김 */
+            text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
+        /* 출석 상태에 따른 배경색 */
+        .present {
+            background-color: #d4f4d7; /* 연한 초록색 */
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .absent {
+            background-color: #f4cccc; /* 연한 빨간색 */
         }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        caption {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        /* 모바일 환경 */
+        /* 반응형 스타일 */
         @media (max-width: 768px) {
-            th, td {
-                padding: 10px;
+            nav {
+                display: none; /* PC에서는 숨김 */
             }
-            table {
-                font-size: 14px;
+            .hamburger {
+                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
             }
-            h1 {
-                font-size: 18px;
-                padding: 15px;
+            #mobile-menu {
+                display: none; /* 모바일 메뉴 기본적으로 숨김 */
             }
-        }
-
-        /* 태블릿 환경 */
-        @media (max-width: 1024px) and (min-width: 769px) {
-            table {
-                font-size: 15px;
+            #mobile-menu.active {
+                display: flex; /* 활성화된 모바일 메뉴 표시 */
             }
-            th, td {
-                padding: 10px;
+            #attendance-table th, #attendance-table td {
+                font-size: 14px; /* 모바일에서 글자 크기 조정 */
             }
         }
 
-        /* 데스크탑 환경 */
-        @media (min-width: 1025px) {
-            table {
-                width: 80%;
-                margin: 20px auto;
-                font-size: 16px;
+        @media (min-width: 768px) and (max-width: 1024px) {
+            #attendance-table th, #attendance-table td {
+                font-size: 16px; /* 태블릿에서 글자 크기 조정 */
             }
         }
-
     </style>
 </head>
 <body>
-    <!-- 상단 메뉴 -->
-    <nav>
-        <a href="#home">홈</a>
-        <a href="#schedule">시간표</a>
-        <a href="#attendance">출결</a>
-    </nav>
+    <header>
+        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
+        
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
 
-    <!-- 로그인 정보 표시 -->
-    <div class="user-info">
-        <div>자리번호: <span id="seatNumber"></span></div>
-        <div>이름: <span id="studentName"></span></div>
-        <div>학년: <span id="grade"></span></div>
-        <button class="logout-btn" onclick="logout()">로그아웃</button>
+        <nav>
+            <a href="attendance.html">출결현황</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </nav>
+
+        <div id="mobile-menu">
+            <a href="attendance.html">출결현황</a>
+            <a href="#menu2">메뉴2</a>
+            <a href="#menu3">메뉴3</a>
+            <a href="#menu4">메뉴4</a>
+            <a href="#menu5">메뉴5</a>
+            <a href="#menu6">메뉴6</a>
+        </div>
+
+        <div id="student-info">
+            <span id="seatNameDisplay"></span>
+            <div class="separator"></div>
+            <span id="nameDisplay"></span>
+            <div class="separator"></div>
+            <span id="gradeDisplay"></span>
+            <button id="logout-btn">로그아웃</button>
+        </div>
+    </header>
+
+    <h1>출결현황</h1>
+
+    <div id="attendance-content">
+        <table id="attendance-table">
+            <tbody>
+                <!-- 출결 데이터가 여기에 추가됩니다. -->
+            </tbody>
+        </table>
     </div>
 
-    <h1>Google Sheets 데이터</h1>
-    <table id="sheetTable">
-        <tbody>
-            <!-- 데이터를 JavaScript로 동적으로 추가 -->
-        </tbody>
-    </table>
-
     <script>
-        // Google Sheets API Key
-        const API_KEY = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
-        
-        // Google Sheets ID와 시트 이름
-        const SHEET_ID = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
-        const SHEET_NAME = '출결';
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
 
-        // API URL
-        const URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+        if (studentName) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            window.location.href = 'index.html';
+        }
 
-        // 데이터를 가져와 테이블에 추가하는 함수
-        async function loadSheetData() {
-            try {
-                const response = await fetch(URL);
-                const data = await response.json();
-                const rows = data.values; // 데이터 배열
+        // 출결 데이터 가져오기
+        async function fetchAttendanceData() {
+            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
+            const sheetName = '출결';
+            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
+            const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
+            
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
+            const data = await response.json();
+            
+            if (data.values && data.values.length > 0) {
+                const tableBody = document.querySelector('#attendance-table tbody');
+                data.values.forEach((row, rowIndex) => {
+                    const seatNumber = row[0]; // 자리번호 (A열)
+                    const name = row[1]; // 이름 (B열)
 
-                if (rows && rows.length > 0) {
-                    const tbody = document.querySelector('#sheetTable tbody');
-
-                    // 첫 번째 행(헤더) 표시
-                    const headerRow = rows[0]; // 첫 번째 행을 헤더로 설정
-                    const thead = document.createElement('thead');
-                    const headerTr = document.createElement('tr');
-                    headerRow.forEach(cell => {
-                        const th = document.createElement('th');
-                        th.textContent = cell || ''; // 빈 값 처리
-                        headerTr.appendChild(th);
-                    });
-                    thead.appendChild(headerTr);
-                    document.querySelector('#sheetTable').insertBefore(thead, tbody); // 테이블에 헤더 추가
-
-                    // 두 번째 행부터 데이터 표시
-                    rows.slice(1).forEach((row) => {
+                    // 자리번호와 이름이 매칭될 경우에만 표시
+                    if (seatNumber === studentSeatNumber && name === studentName) {
                         const tr = document.createElement('tr');
-                        row.forEach(cell => {
+                        row.forEach((cell, index) => {
                             const td = document.createElement('td');
-                            td.textContent = cell || ''; // 빈 값 처리
+
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
                             tr.appendChild(td);
                         });
-                        tbody.appendChild(tr); // 모든 행 표시
-                    });
-                }
-            } catch (error) {
-                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+                        tableBody.appendChild(tr);
+                    } else if (rowIndex === 1) { // 2행도 포함
+                        const tr = document.createElement('tr');
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
+
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    }
+                });
             }
         }
 
-        // 페이지 로드 시 데이터 가져오기 실행
-        loadSheetData();
+        fetchAttendanceData();
 
-        // 자리번호, 이름, 학년 정보를 설정
-        function setUserInfo() {
-            const seatNumber = "123"; // 자리번호 (예시)
-            const studentName = "홍길동"; // 이름 (예시)
-            const grade = "3학년"; // 학년 (예시)
+        // 햄버거 메뉴 기능
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
 
-            document.getElementById('seatNumber').textContent = seatNumber;
-            document.getElementById('studentName').textContent = studentName;
-            document.getElementById('grade').textContent = grade;
-        }
-
-        // 로그아웃 기능
-        function logout() {
-            // 로그아웃 처리 (예시: 세션 삭제, 로그인 화면으로 이동 등)
-            alert("로그아웃되었습니다.");
-            window.location.href = "/login"; // 로그인 페이지로 리다이렉션 (경로는 실제 사용에 맞게 설정)
-        }
-
-        // 페이지 로드 시 사용자 정보 설정
-        setUserInfo();
+        // 로그아웃 버튼 클릭 시
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
