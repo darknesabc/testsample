@@ -183,14 +183,20 @@
     </div>
 
     <script>
+        // LocalStorage에서 학생 정보 가져오기
         const studentName = localStorage.getItem('studentName');
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
         const studentGrade = localStorage.getItem('studentGrade');
 
-        if (studentName) {
+        // 학생 정보가 있을 경우 화면에 표시
+        if (studentName && studentSeatNumber && studentGrade) {
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
+            // 학생 정보가 없으면 로그인 페이지로 리다이렉트
             window.location.href = 'index.html';
         }
+    </script>
+</body>
+</html>
