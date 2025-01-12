@@ -18,6 +18,47 @@
             color: white;
             margin: 0;
         }
+        /* 메뉴 스타일 */
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        /* 로그인 정보 표시 */
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #007BFF;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+        }
+        .user-info div {
+            margin: 0 10px;
+        }
+        .logout-btn {
+            background-color: red;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout-btn:hover {
+            background-color: darkred;
+        }
+        /* 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -79,6 +120,21 @@
     </style>
 </head>
 <body>
+    <!-- 상단 메뉴 -->
+    <nav>
+        <a href="#home">홈</a>
+        <a href="#schedule">시간표</a>
+        <a href="#attendance">출결</a>
+    </nav>
+
+    <!-- 로그인 정보 표시 -->
+    <div class="user-info">
+        <div>자리번호: <span id="seatNumber"></span></div>
+        <div>이름: <span id="studentName"></span></div>
+        <div>학년: <span id="grade"></span></div>
+        <button class="logout-btn" onclick="logout()">로그아웃</button>
+    </div>
+
     <h1>Google Sheets 데이터</h1>
     <table id="sheetTable">
         <tbody>
@@ -137,6 +193,27 @@
 
         // 페이지 로드 시 데이터 가져오기 실행
         loadSheetData();
+
+        // 자리번호, 이름, 학년 정보를 설정
+        function setUserInfo() {
+            const seatNumber = "123"; // 자리번호 (예시)
+            const studentName = "홍길동"; // 이름 (예시)
+            const grade = "3학년"; // 학년 (예시)
+
+            document.getElementById('seatNumber').textContent = seatNumber;
+            document.getElementById('studentName').textContent = studentName;
+            document.getElementById('grade').textContent = grade;
+        }
+
+        // 로그아웃 기능
+        function logout() {
+            // 로그아웃 처리 (예시: 세션 삭제, 로그인 화면으로 이동 등)
+            alert("로그아웃되었습니다.");
+            window.location.href = "/login"; // 로그인 페이지로 리다이렉션 (경로는 실제 사용에 맞게 설정)
+        }
+
+        // 페이지 로드 시 사용자 정보 설정
+        setUserInfo();
     </script>
 </body>
 </html>
