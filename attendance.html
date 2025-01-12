@@ -70,20 +70,26 @@
                     document.querySelector('#sheetTable').insertBefore(thead, tbody); // 테이블에 헤더 추가
 
                     // 두 번째 행부터 데이터 표시
-                    rows.slice(1).forEach(row => {
+                    rows.slice(1).forEach((row, index) => {
                         const tr = document.createElement('tr');
                         row.forEach(cell => {
                             const td = document.createElement('td');
                             td.textContent = cell || ''; // 빈 값 처리
                             tr.appendChild(td);
                         });
-                        tbody.appendChild(tr);
+
+                        // 첫 번째 데이터 행(2행)을 숨기지 않도록 하고, 두 번째 데이터 행부터 표시
+                        if (index === 0) {
+                            tbody.appendChild(tr); // 2행은 표시
+                        } else {
+                            tbody.appendChild(tr); // 3행 이후 데이터는 표시
+                        }
                     });
 
-                    // 첫 번째 데이터 행 숨기기
-                    const firstRow = tbody.querySelector('tr');
-                    if (firstRow) {
-                        firstRow.style.display = 'none'; // 첫 번째 데이터 행 숨김
+                    // 첫 번째 데이터 행 숨기기 (1행)
+                    const firstDataRow = tbody.querySelector('tr');
+                    if (firstDataRow) {
+                        firstDataRow.style.display = 'none'; // 첫 번째 데이터 행 숨김
                     }
                 }
             } catch (error) {
