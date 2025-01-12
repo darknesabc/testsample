@@ -19,6 +19,7 @@
         th {
             background-color: #f4f4f4;
             font-weight: bold;
+            display: none; /* 헤더 숨기기 */
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -84,8 +85,8 @@
                 if (rows && rows.length > 0) {
                     const tbody = document.querySelector('#sheetTable tbody');
 
-                    // 각 행 데이터를 테이블에 추가
-                    rows.slice(1).forEach(row => { // 첫 번째 행은 헤더이므로 제외
+                    // 첫 번째 행(헤더) 제외하고 2행도 포함하여 추가
+                    rows.forEach(row => {
                         const tr = document.createElement('tr');
                         row.forEach(cell => {
                             const td = document.createElement('td');
