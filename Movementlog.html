@@ -174,13 +174,6 @@
 
     <h1>이동일지</h1>
 
-    <!-- 날짜 선택 추가 -->
-    <div id="date-selector">
-        <label for="date">날짜 선택: </label>
-        <input type="date" id="date" name="date" />
-        <button id="filter-btn">검색</button>
-    </div>
-
     <div id="attendance-content">
         <table id="attendance-table">
             <tbody>
@@ -210,46 +203,31 @@
         const spreadsheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
         const range = '이동일지!A:F'; // 가져올 범위 지정
 
-        // 날짜 필터링 버튼 클릭 시
-        document.getElementById('filter-btn').addEventListener('click', function() {
-            const selectedDate = document.getElementById('date').value;
-            if (!selectedDate) {
-                alert('날짜를 선택해주세요.');
-                return;
-            }
+        // Google Sheets API 호출
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+          .then(response => response.json())
+          .then(data => {
+            // 데이터 처리
+            console.log(data);  // API 응답 확인
 
-            // Google Sheets API 호출
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
-                .then(response => response.json())
-                .then(data => {
-                    // 데이터 처리
-                    console.log(data);  // API 응답 확인
-
-                    // 가져온 데이터를 HTML에 표시하는 예시
-                    const rows = data.values;
-                    const tableBody = document.querySelector("#attendance-table tbody");
-                    
-                    // 자리번호와 이름이 매칭되는 데이터만 필터링
-                    const filteredRows = rows.filter(row => 
-                        row[0] == studentSeatNumber && 
-                        row[1] == studentName && 
-                        row[5] == selectedDate  // 6번째 열 (날짜)와 선택된 날짜 매칭
-                    );
-
-                    // 테이블에 필터링된 데이터 표시
-                    tableBody.innerHTML = ''; // 이전 데이터를 삭제
-                    filteredRows.forEach(row => {
-                        const tr = document.createElement("tr");
-                        row.forEach(cell => {
-                            const td = document.createElement("td");
-                            td.textContent = cell;
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        });
+            // 가져온 데이터를 HTML에 표시하는 예시
+            const rows = data.values;
+            const tableBody = document.querySelector("#attendance-table tbody");
+            
+            // 자리번호와 이름이 매칭되는 데이터만 필터링
+            const filteredRows = rows.filter(row => row[0] == studentSeatNumber && row[1] == studentName);  // A열 (자리번호)와 B열 (이름) 매칭
+            
+            filteredRows.forEach(row => {
+              const tr = document.createElement("tr");
+              row.forEach(cell => {
+                const td = document.createElement("td");
+                td.textContent = cell;
+                tr.appendChild(td);
+              });
+              tableBody.appendChild(tr);
+            });
+          })
+          .catch(error => console.error('Error fetching data:', error));
     </script>
 </body>
 </html>
