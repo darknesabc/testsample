@@ -87,7 +87,6 @@
         }
         #attendance-content {
             padding: 10px;
-            overflow-x: auto; /* 가로 스크롤 가능 */
         }
         #attendance-table {
             width: 100%;
@@ -133,23 +132,6 @@
                 font-size: 16px; /* 태블릿에서 글자 크기 조정 */
             }
         }
-
-        /* 테이블의 5열까지 고정 */
-        @media (max-width: 1024px) {
-            #attendance-table th:nth-child(-n+5),
-            #attendance-table td:nth-child(-n+5) {
-                position: sticky;
-                left: 0;
-                background-color: #fff;
-                z-index: 1;
-            }
-
-            #attendance-table th:nth-child(6),
-            #attendance-table td:nth-child(6) {
-                background-color: #f0f0f0;
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -194,20 +176,6 @@
 
     <div id="attendance-content">
         <table id="attendance-table">
-            <thead>
-                <tr>
-                    <th>자리번호</th>
-                    <th>이름</th>
-                    <th>담임</th>
-                    <th>학년</th>
-                    <th>요일</th>
-                    <!-- 나머지 열은 날짜 및 출석 상태 등 -->
-                    <th>날짜</th>
-                    <th>출석</th>
-                    <th>결석</th>
-                    <!-- 기타 열 -->
-                </tr>
-            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -249,21 +217,42 @@
                         row.forEach((cell, index) => {
                             const td = document.createElement('td');
 
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열을 처리
-                            if (index >= 6 && index <= 12) {
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
                                 if (cell === '1') {
-                                    td.classList.add('present');
-                                    td.innerText = '출석';
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
                                 } else if (cell === '3') {
-                                    td.classList.add('absent');
-                                    td.innerText = '결석';
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                                 } else {
-                                    td.innerText = '기타';
+                                    td.textContent = cell;
                                 }
                             } else {
-                                td.innerText = cell || '-';
+                                td.textContent = cell;
                             }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    } else if (rowIndex === 1) { // 2행도 포함
+                        const tr = document.createElement('tr');
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
 
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
                             tr.appendChild(td);
                         });
                         tableBody.appendChild(tr);
@@ -273,6 +262,18 @@
         }
 
         fetchAttendanceData();
+
+        // 햄버거 메뉴 기능
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // 로그아웃 버튼 클릭 시
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
