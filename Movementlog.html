@@ -244,7 +244,11 @@
           tableBody.innerHTML = '';  // 기존 데이터 초기화
 
           // 데이터 필터링: 입력날짜가 선택된 날짜와 일치하는 데이터만 표시
-          const filteredRows = attendanceData.filter(row => row[4] === formattedDate); // 5번째 열(입력날짜)과 선택된 날짜 비교
+          const filteredRows = attendanceData.filter(row => {
+            const inputDate = row[4]; // 입력날짜는 5번째 열
+            const formattedInputDate = inputDate.split('-').join('/'); // YYYY-MM-DD → YYYY/MM/DD 변환
+            return formattedInputDate === formattedDate;  // 날짜 비교
+          });
 
           filteredRows.forEach(row => {
             const tr = document.createElement("tr");
