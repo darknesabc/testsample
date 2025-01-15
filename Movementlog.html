@@ -237,14 +237,15 @@
           const selectedDate = event.target.value;  // YYYY-MM-DD 형식
           console.log('선택된 날짜:', selectedDate);  // 날짜 선택 확인
 
-          // 날짜에 맞는 데이터를 필터링하여 표시
+          // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
           const tableBody = document.querySelector("#attendance-table tbody");
           tableBody.innerHTML = '';  // 기존 데이터 초기화
 
-          // 데이터 필터링: 입력날짜가 선택된 날짜와 일치하는 데이터만 표시
           const filteredRows = attendanceData.filter(row => {
             const inputDate = row[4]; // 입력날짜는 5번째 열
-            return inputDate === selectedDate;  // 날짜 비교
+            const seatNumber = row[0]; // 자리번호는 1번째 열
+            const name = row[1]; // 이름은 2번째 열
+            return inputDate === selectedDate && seatNumber === studentSeatNumber && name === studentName;
           });
 
           // 필터링된 데이터가 없으면 없다고 알림
@@ -252,7 +253,7 @@
             const tr = document.createElement("tr");
             const td = document.createElement("td");
             td.colSpan = 6; // 모든 열을 차지
-            td.textContent = "해당 날짜에 대한 데이터가 없습니다.";
+            td.textContent = "해당 날짜와 자리번호, 이름에 맞는 데이터가 없습니다.";
             tr.appendChild(td);
             tableBody.appendChild(tr);
           }
