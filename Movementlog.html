@@ -241,24 +241,46 @@
                 // 날짜 선택기 기본값 설정
                 datePicker.value = koreanDate;
 
-                // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
-                const filteredRows = attendanceData.filter(row => {
-                    const inputDate = row[4]; // 입력날짜는 5번째 열
-                    const seatNumber = row[0]; // 자리번호는 1번째 열
-                    const name = row[1]; // 이름은 2번째 열
-                    return inputDate === koreanDate && seatNumber === studentSeatNumber && name === studentName;
+                // 날짜 선택기에서 날짜 변경 시
+                datePicker.addEventListener('change', () => {
+                    const selectedDate = datePicker.value; // YYYY-MM-DD 형식
+                    console.log('선택된 날짜:', selectedDate);
+
+                    // 날짜가 선택되지 않은 경우, 전체 데이터 표시
+                    if (!selectedDate) {
+                        showAllData(attendanceData, tableBody);
+                    } else {
+                        // 선택된 날짜에 해당하는 데이터 필터링
+                        const filteredRows = attendanceData.filter(row => {
+                            const inputDate = row[4]; // 입력날짜는 5번째 열
+                            const seatNumber = row[0]; // 자리번호는 1번째 열
+                            const name = row[1]; // 이름은 2번째 열
+                            return inputDate === selectedDate && seatNumber === studentSeatNumber && name === studentName;
+                        });
+
+                        displayData(filteredRows, tableBody);
+                    }
                 });
 
-                // 필터링된 데이터가 없으면 없다고 알림
-                if (filteredRows.length === 0) {
-                    const tr = document.createElement("tr");
-                    const td = document.createElement("td");
-                    td.colSpan = 6; // 모든 열을 차지
-                    td.textContent = "해당 날짜와 자리번호, 이름에 맞는 데이터가 없습니다.";
-                    tr.appendChild(td);
-                    tableBody.appendChild(tr);
-                }
+                // 페이지 로드 시 기본적으로 전체 데이터 표시
+                showAllData(attendanceData, tableBody);
+              })
+              .catch(error => console.error('Error fetching data:', error));
+        };
 
+        // 데이터를 출력하는 함수
+        function displayData(filteredRows, tableBody) {
+            tableBody.innerHTML = ''; // 기존 데이터를 초기화
+
+            // 필터링된 데이터가 없으면 알림 표시
+            if (filteredRows.length === 0) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 6; // 모든 열을 차지
+                td.textContent = "해당 날짜와 자리번호, 이름에 맞는 데이터가 없습니다.";
+                tr.appendChild(td);
+                tableBody.appendChild(tr);
+            } else {
                 // 필터링된 데이터 출력
                 filteredRows.forEach(row => {
                     const tr = document.createElement("tr");
@@ -269,9 +291,13 @@
                     });
                     tableBody.appendChild(tr);
                 });
-              })
-              .catch(error => console.error('Error fetching data:', error));
-        };
+            }
+        }
+
+        // 전체 데이터를 표시하는 함수
+        function showAllData(attendanceData, tableBody) {
+            displayData(attendanceData, tableBody);
+        }
 
         // 햄버거 메뉴 클릭 시 메뉴 열기
         const hamburger = document.getElementById('hamburger');
