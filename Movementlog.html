@@ -229,8 +229,12 @@
 
         // 날짜 선택 기능 처리
         const datePicker = document.getElementById('date-picker');
-        const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 (YYYY-MM-DD 형식)
-        datePicker.value = today;
+
+        // 현재 날짜를 UTC로 설정하고, ISO 문자열에서 날짜 부분만 추출
+        const today = new Date();
+        const utcDate = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()).toISOString().split('T')[0]; 
+
+        datePicker.value = utcDate;  // 오늘 날짜를 기본값으로 설정
 
         // 날짜에 맞는 출결 데이터를 표시
         datePicker.addEventListener('change', (event) => {
