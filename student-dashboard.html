@@ -175,7 +175,7 @@
         </div>
     </header>
 
-    <h1>학생 대시보드</h1>
+    <h1 id="student-dashboard-title">학생 대시보드</h1>
     <p id="welcome"></p>
 
     <div class="tabs">
@@ -202,6 +202,10 @@
         const studentGrade = localStorage.getItem('studentGrade');
 
         if (studentName) {
+            // 페이지 제목과 본문 제목을 로그인한 학생 이름으로 변경
+            document.title = `${studentName} 학생 대시보드`;
+            document.getElementById('student-dashboard-title').innerText = `${studentName} 학생 대시보드`;
+            
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
