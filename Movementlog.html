@@ -239,7 +239,7 @@
         const koreanTime = new Date(today.getTime() + (koreanOffset * 60 * 1000));
         const koreanDate = koreanTime.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
 
-        // 한국 시간 오늘 날짜를 기본값으로 설정
+        // 페이지 접속 시 기본 날짜를 오늘 날짜로 설정
         datePicker.value = koreanDate;
 
         // 날짜에 맞는 출결 데이터를 표시
