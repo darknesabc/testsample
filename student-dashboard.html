@@ -19,7 +19,7 @@
             background-color: #f0f0f0;
             padding: 10px;
             flex-wrap: wrap;
-            position: relative;
+            position: relative; /* 햄버거 메뉴 위치 조정 */
         }
         nav {
             display: flex;
@@ -65,14 +65,14 @@
             left: 0;
             right: 0;
             z-index: 10;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ccc; /* 메뉴 테두리 추가 */
+            border-radius: 5px; /* 메뉴 모서리 둥글게 */
         }
         #mobile-menu a {
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
-            text-align: center;
+            text-align: center; /* 가운데 정렬 */
         }
         .hamburger {
             display: none;
@@ -102,61 +102,39 @@
             background-color: #ddd;
         }
         #content {
-            padding: 10px;
+            padding: 10px; /* 콘텐츠 패딩 추가 */
         }
-
-        /* 공지사항 스타일 */
-        #notice-content {
-            margin-top: 20px;
-        }
-
-        .notice-card {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-            padding: 15px;
-        }
-
-        .notice-card h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .notice-card p {
-            font-size: 16px;
-            color: #555;
-            line-height: 1.6;
-            margin: 0;
+        #notice-content p {
+            margin: 0; /* 공지사항 내용 여백 제거 */
+            padding: 5px 0; /* 패딩 추가 */
         }
 
         /* 반응형 이미지 스타일 */
         #timetable-content img, #grades-content img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
+            max-width: 100%; /* 부모 요소 너비에 맞게 */
+            height: auto; /* 비율 유지 */
+            object-fit: contain; /* 잘리지 않고 전체 이미지가 보이도록 */
         }
 
         /* 반응형 스타일 */
         @media (max-width: 768px) {
             nav {
-                display: none;
+                display: none; /* PC에서는 숨김 */
             }
             .hamburger {
-                display: flex;
+                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
             }
             #mobile-menu {
-                display: none;
+                display: none; /* 모바일 메뉴 기본적으로 숨김 */
             }
             #mobile-menu.active {
-                display: flex;
+                display: flex; /* 활성화된 모바일 메뉴 표시 */
             }
             #content {
-                padding: 5px;
+                padding: 5px; /* 모바일에서 콘텐츠 패딩 조정 */
             }
             #notice-content p {
-                font-size: 14px;
+                font-size: 14px; /* 공지사항 폰트 사이즈 조정 */
             }
         }
     </style>
@@ -170,7 +148,7 @@
         </div>
 
         <nav>
-            <a href="attendance.html">출결현황</a>
+            <a href="attendance.html">출결현황</a> <!-- 메뉴1을 출결현황으로 변경 -->
             <a href="Movementlog.html">이동일지</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -179,7 +157,7 @@
         </nav>
 
         <div id="mobile-menu">
-            <a href="attendance.html">출결현황</a>
+            <a href="attendance.html">출결현황</a> <!-- 모바일 메뉴1을 출결현황으로 변경 -->
             <a href="Movementlog.html">이동일지</a>
             <a href="#menu3">메뉴3</a>
             <a href="#menu4">메뉴4</a>
@@ -224,8 +202,10 @@
         const studentGrade = localStorage.getItem('studentGrade');
 
         if (studentName) {
+            // 페이지 제목과 본문 제목을 로그인한 학생 이름으로 변경
             document.title = `${studentName} 학생 대시보드`;
             document.getElementById('student-dashboard-title').innerText = `${studentName} 학생 대시보드`;
+            
             document.getElementById('welcome').innerText = `환영합니다, ${studentName}님!`;
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
@@ -247,12 +227,7 @@
                 const matchingNotices = notices.filter(row => row[0] === studentGrade);
 
                 if (matchingNotices.length > 0) {
-                    const noticeContent = matchingNotices.map(row => `
-                        <div class="notice-card">
-                            <h3>공지사항 제목</h3>
-                            <p>${row[1]}</p>
-                        </div>
-                    `).join('');
+                    const noticeContent = matchingNotices.map(row => `<p>${row[1]}</p>`).join('');
                     document.getElementById('notice-content').innerHTML = noticeContent;
                 } else {
                     document.getElementById('notice-content').innerHTML = '<p>일치하는 공지사항이 없습니다.</p>';
@@ -262,6 +237,30 @@
                 document.getElementById('notice-content').innerHTML = '<p>공지사항을 불러오는 데 오류가 발생했습니다.</p>';
             }
         }
+
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('#content > div');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.style.display = 'none');
+
+                tab.classList.add('active');
+                const activeContent = document.getElementById(`${tab.id.replace('tab-', '')}-content`);
+                activeContent.style.display = 'block';
+            });
+        });
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
 
         window.onload = () => {
             loadNotices();
