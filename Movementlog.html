@@ -197,6 +197,16 @@
     </div>
 
     <script>
+        // 날짜 선택기의 기본값을 오늘 날짜로 설정하는 함수
+        function getTodayDate() {
+            const today = new Date();
+            const koreanOffset = 9 * 60; // 한국은 UTC+9
+
+            // 한국 시간으로 변환
+            const koreanTime = new Date(today.getTime() + (koreanOffset * 60 * 1000));
+            return koreanTime.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
+        }
+
         // 학생 정보와 출결 데이터를 로드하고 필터링하는 함수
         function loadAttendanceData() {
             // LocalStorage에서 학생 정보 가져오기
@@ -230,19 +240,8 @@
                 const tableBody = document.querySelector("#attendance-table tbody");
                 const datePicker = document.getElementById('date-picker');
 
-                // 한국 시간(KST, UTC+9)으로 현재 날짜를 설정
-                const today = new Date();
-                const koreanOffset = 9 * 60; // 한국은 UTC+9
-
-                // 한국 시간으로 변환
-                const koreanTime = new Date(today.getTime() + (koreanOffset * 60 * 1000));
-                const koreanDate = koreanTime.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
-
                 // 날짜 선택기 기본값 설정
-                datePicker.value = koreanDate;
-
-                // 선택한 날짜
-                const selectedDate = datePicker.value || koreanDate;
+                const selectedDate = datePicker.value || getTodayDate();
 
                 // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
                 const filteredRows = attendanceData.filter(row => {
