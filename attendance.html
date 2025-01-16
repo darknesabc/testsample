@@ -198,7 +198,8 @@
         const studentSeatNumber = localStorage.getItem('studentSeatNumber');
         const studentGrade = localStorage.getItem('studentGrade');
 
-        if (studentName) {
+        // 이름, 자리번호, 학년이 없으면 로그인 페이지로 이동
+        if (studentName && studentSeatNumber && studentGrade) {
             document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
             document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
@@ -224,9 +225,8 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate = '') {  // 기본값을 빈 문자열로 설정
+        async function fetchAttendanceData(selectedDate = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
-            const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
             const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
             
@@ -237,7 +237,7 @@
                 const tableBody = document.querySelector('#attendance-table tbody');
                 tableBody.innerHTML = ''; // 기존 데이터를 초기화
                 
-                data.values.forEach((row, rowIndex) => {
+                data.values.forEach((row) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
 
