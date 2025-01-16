@@ -212,6 +212,18 @@
             window.location.href = 'index.html';
         }
 
+        // 로그아웃 버튼 클릭 시, 로그아웃 처리 및 로그인 페이지로 이동
+        const logoutButton = document.getElementById('logout-btn');
+        logoutButton.addEventListener('click', () => {
+            // LocalStorage에서 사용자 정보 제거
+            localStorage.removeItem('studentName');
+            localStorage.removeItem('studentSeatNumber');
+            localStorage.removeItem('studentGrade');
+
+            // index.html 페이지로 리다이렉트
+            window.location.href = 'index.html';
+        });
+
         // API 키와 스프레드시트 ID 설정
         const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // 본인의 API 키로 교체
         const spreadsheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
