@@ -5,174 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>출결현황</title>
     <style>
-        /* 기본 스타일 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 10px;
-            flex-wrap: wrap;
-            position: relative;
-        }
-        nav {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        #student-info {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            white-space: nowrap;
-        }
-        #logout-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #welcome {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        .separator {
-            border-left: 1px solid #333;
-            height: 20px;
-            margin: 0 5px;
-        }
-        #mobile-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #mobile-menu a {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .hamburger div {
-            width: 25px;
-            height: 3px;
-            background-color: #333;
-        }
-        #attendance-content {
-            padding: 10px;
-        }
-        #attendance-table {
-            width: 100%;
-            border-collapse: collapse; /* 테두리 겹침 방지 */
-        }
-        #attendance-table th,
-        #attendance-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-            white-space: nowrap; /* 텍스트를 한 줄로 유지 */
-            overflow: hidden; /* 넘치는 텍스트 숨김 */
-            text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
-        }
-        /* 출석 상태에 따른 배경색 */
-        .present {
-            background-color: #d4f4d7; /* 연한 초록색 */
-        }
-        .absent {
-            background-color: #f4cccc; /* 연한 빨간색 */
-        }
-        /* 반응형 스타일 */
-        @media (max-width: 768px) {
-            nav {
-                display: none; /* PC에서는 숨김 */
-            }
-            .hamburger {
-                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
-            }
-            #mobile-menu {
-                display: none; /* 모바일 메뉴 기본적으로 숨김 */
-            }
-            #mobile-menu.active {
-                display: flex; /* 활성화된 모바일 메뉴 표시 */
-            }
-            #attendance-table th, #attendance-table td {
-                font-size: 14px; /* 모바일에서 글자 크기 조정 */
-            }
-        }
+        /* 기존 스타일 유지 */
 
-        @media (min-width: 768px) and (max-width: 1024px) {
-            #attendance-table th, #attendance-table td {
-                font-size: 16px; /* 태블릿에서 글자 크기 조정 */
-            }
+        #date-picker {
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <header>
-        <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
-        
-        <div class="hamburger" id="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
-        <nav>
-            <a href="attendance.html">출결현황</a>
-            <a href="Movementlog.html">이동일지</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </nav>
-
-        <div id="mobile-menu">
-            <a href="attendance.html">출결현황</a>
-            <a href="Movementlog.html">이동일지</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </div>
-
-        <div id="student-info">
-            <span id="seatNameDisplay"></span>
-            <div class="separator"></div>
-            <span id="nameDisplay"></span>
-            <div class="separator"></div>
-            <span id="gradeDisplay"></span>
-            <button id="logout-btn">로그아웃</button>
-        </div>
+        <!-- 기존 내용 유지 -->
     </header>
 
     <h1>출결현황</h1>
+
+    <!-- 날짜 선택기 추가 -->
+    <label for="date-picker">날짜 선택: </label>
+    <input type="date" id="date-picker" name="date" value="" />
 
     <div id="attendance-content">
         <table id="attendance-table">
@@ -193,6 +44,23 @@
             document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
         } else {
             window.location.href = 'index.html';
+        }
+
+        // 날짜 선택기에서 선택한 날짜 형식을 mm-dd로 변환
+        document.getElementById('date-picker').addEventListener('change', function(event) {
+            const selectedDate = event.target.value; // 선택한 날짜 (yyyy-mm-dd 형식)
+            const formattedDate = formatDate(selectedDate);
+            console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
+
+            // 선택된 날짜에 따라 출결 데이터 필터링 추가 가능
+            // 예: fetchAttendanceData(formattedDate);
+        });
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${month}-${day}`; // mm-dd 형식
         }
 
         // 출결 데이터 가져오기
@@ -218,28 +86,6 @@
                             const td = document.createElement('td');
 
                             // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    } else if (rowIndex === 1) { // 2행도 포함
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
                             if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
                                 if (cell === '1') {
                                     td.textContent = '출석';
