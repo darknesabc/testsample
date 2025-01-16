@@ -224,7 +224,7 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate) {
+        async function fetchAttendanceData(selectedDate = '') {  // 기본값을 빈 문자열로 설정
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -258,7 +258,7 @@
                                 '01-19': 18
                             };
 
-                            if (dateColumnIndexMap[selectedDate] === index) {
+                            if (selectedDate && dateColumnIndexMap[selectedDate] === index) {
                                 if (cell === '1') {
                                     td.textContent = '출석';
                                     td.classList.add('present'); // 출석일 경우 초록색 배경 추가
