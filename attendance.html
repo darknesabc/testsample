@@ -237,8 +237,17 @@
                 const tableBody = document.querySelector('#attendance-table tbody');
                 tableBody.innerHTML = ''; // 기존 데이터를 초기화
 
+                // 첫 번째 행(헤더)을 숨기기 위한 변수
+                let isFirstRow = true;
+
                 // 모든 행을 표시
-                data.values.forEach((row) => {
+                data.values.forEach((row, rowIndex) => {
+                    // 첫 번째 행은 숨기고, 두 번째 행만 무조건 표시
+                    if (isFirstRow) {
+                        isFirstRow = false;
+                        return; // 첫 번째 행을 건너뜀
+                    }
+
                     const tr = document.createElement('tr');
                     row.forEach((cell, index) => {
                         const td = document.createElement('td');
