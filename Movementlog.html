@@ -197,7 +197,8 @@
     </div>
 
     <script>
-        window.onload = function() {
+        // 학생 정보와 출결 데이터를 로드하고 필터링하는 함수
+        function loadAttendanceData() {
             // LocalStorage에서 학생 정보 가져오기
             const studentName = localStorage.getItem('studentName');
             const studentSeatNumber = localStorage.getItem('studentSeatNumber');
@@ -219,11 +220,10 @@
             const range = '이동일지!A:F'; // 가져올 범위 지정
 
             // Google Sheets API 호출
-            let attendanceData = [];
             fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
               .then(response => response.json())
               .then(data => {
-                attendanceData = data.values;
+                const attendanceData = data.values;
                 console.log("Fetched data:", attendanceData);  // API 응답 확인
 
                 // 날짜에 맞는 출결 데이터를 자동으로 표시
@@ -241,18 +241,15 @@
                 // 날짜 선택기 기본값 설정
                 datePicker.value = koreanDate;
 
-                // 날짜 선택기에서 선택한 날짜
-                const selectedDate = datePicker.value;
-
-                // 선택한 날짜가 없으면 기본값(today)로 필터링
-                const filterDate = selectedDate || koreanDate;
+                // 선택한 날짜
+                const selectedDate = datePicker.value || koreanDate;
 
                 // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
                 const filteredRows = attendanceData.filter(row => {
                     const inputDate = row[4]; // 입력날짜는 5번째 열
                     const seatNumber = row[0]; // 자리번호는 1번째 열
                     const name = row[1]; // 이름은 2번째 열
-                    return inputDate === filterDate && seatNumber === studentSeatNumber && name === studentName;
+                    return inputDate === selectedDate && seatNumber === studentSeatNumber && name === studentName;
                 });
 
                 // 필터링된 데이터가 없으면 없다고 알림
@@ -277,7 +274,13 @@
                 });
               })
               .catch(error => console.error('Error fetching data:', error));
-        };
+        }
+
+        // 페이지 로드 시 출결 데이터 로드
+        window.onload = loadAttendanceData;
+
+        // 날짜 선택 시 필터링된 데이터 로드
+        document.getElementById('date-picker').addEventListener('change', loadAttendanceData);
 
         // 햄버거 메뉴 클릭 시 메뉴 열기
         const hamburger = document.getElementById('hamburger');
@@ -285,11 +288,6 @@
 
         hamburger.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
-        });
-
-        // 날짜 변경 시 필터링
-        document.getElementById('date-picker').addEventListener('change', function() {
-            window.onload(); // 날짜 변경 시 페이지를 다시 로드하여 데이터 업데이트
         });
     </script>
 </body>
