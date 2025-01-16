@@ -197,96 +197,94 @@
     </div>
 
     <script>
-        // 날짜 선택기의 기본값을 오늘 날짜로 설정하는 함수
-        function getTodayDate() {
-            const today = new Date();
-            const koreanOffset = 9 * 60; // 한국은 UTC+9
+        // LocalStorage에서 학생 정보 가져오기
+        const studentName = localStorage.getItem('studentName');
+        const studentSeatNumber = localStorage.getItem('studentSeatNumber');
+        const studentGrade = localStorage.getItem('studentGrade');
 
-            // 한국 시간으로 변환
-            const koreanTime = new Date(today.getTime() + (koreanOffset * 60 * 1000));
-            return koreanTime.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
+        // 학생 정보가 있을 경우 화면에 표시
+        if (studentName && studentSeatNumber && studentGrade) {
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            // 학생 정보가 없으면 로그인 페이지로 리다이렉트
+            window.location.href = 'index.html';
         }
 
-        // 학생 정보와 출결 데이터를 로드하고 필터링하는 함수
-        function loadAttendanceData() {
-            // LocalStorage에서 학생 정보 가져오기
-            const studentName = localStorage.getItem('studentName');
-            const studentSeatNumber = localStorage.getItem('studentSeatNumber');
-            const studentGrade = localStorage.getItem('studentGrade');
+        // API 키와 스프레드시트 ID 설정
+        const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // 본인의 API 키로 교체
+        const spreadsheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
+        const range = '이동일지!A:F'; // 가져올 범위 지정
 
-            // 학생 정보가 있을 경우 화면에 표시
-            if (studentName && studentSeatNumber && studentGrade) {
-                document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
-                document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
-                document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
-            } else {
-                // 학생 정보가 없으면 로그인 페이지로 리다이렉트
-                window.location.href = 'index.html';
-            }
+        // Google Sheets API 호출
+        let attendanceData = [];
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
+          .then(response => response.json())
+          .then(data => {
+            attendanceData = data.values;
+            console.log("Fetched data:", attendanceData);  // API 응답 확인
+          })
+          .catch(error => console.error('Error fetching data:', error));
 
-            // API 키와 스프레드시트 ID 설정
-            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk'; // 본인의 API 키로 교체
-            const spreadsheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
-            const range = '이동일지!A:F'; // 가져올 범위 지정
+        // 날짜 선택 기능 처리
+        const datePicker = document.getElementById('date-picker');
 
-            // Google Sheets API 호출
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`)
-              .then(response => response.json())
-              .then(data => {
-                const attendanceData = data.values;
-                console.log("Fetched data:", attendanceData);  // API 응답 확인
+        // 한국 시간(KST, UTC+9)으로 현재 날짜를 설정
+        const today = new Date();
+        const koreanOffset = 9 * 60; // 한국은 UTC+9
 
-                // 날짜에 맞는 출결 데이터를 자동으로 표시
-                const tableBody = document.querySelector("#attendance-table tbody");
-                const datePicker = document.getElementById('date-picker');
+        // 한국 시간으로 변환
+        const koreanTime = new Date(today.getTime() + (koreanOffset * 60 * 1000));
+        const koreanDate = koreanTime.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
 
-                // 날짜 선택기 기본값 설정
-                const selectedDate = datePicker.value || getTodayDate();
+        // 한국 시간 오늘 날짜를 기본값으로 설정
+        datePicker.value = koreanDate;
 
-                // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
-                const filteredRows = attendanceData.filter(row => {
-                    const inputDate = row[4]; // 입력날짜는 5번째 열
-                    const seatNumber = row[0]; // 자리번호는 1번째 열
-                    const name = row[1]; // 이름은 2번째 열
-                    return inputDate === selectedDate && seatNumber === studentSeatNumber && name === studentName;
-                });
+        // 날짜에 맞는 출결 데이터를 표시
+        datePicker.addEventListener('change', (event) => {
+          const selectedDate = event.target.value;  // YYYY-MM-DD 형식
+          console.log('선택된 날짜:', selectedDate);  // 날짜 선택 확인
 
-                // 필터링된 데이터가 없으면 없다고 알림
-                if (filteredRows.length === 0) {
-                    const tr = document.createElement("tr");
-                    const td = document.createElement("td");
-                    td.colSpan = 6; // 모든 열을 차지
-                    td.textContent = "해당 날짜와 자리번호, 이름에 맞는 데이터가 없습니다.";
-                    tr.appendChild(td);
-                    tableBody.appendChild(tr);
-                }
+          // 날짜, 자리번호, 이름이 모두 일치하는 데이터를 필터링하여 표시
+          const tableBody = document.querySelector("#attendance-table tbody");
+          tableBody.innerHTML = '';  // 기존 데이터 초기화
 
-                // 필터링된 데이터 출력
-                filteredRows.forEach(row => {
-                    const tr = document.createElement("tr");
-                    row.forEach(cell => {
-                        const td = document.createElement("td");
-                        td.textContent = cell;
-                        tr.appendChild(td);
-                    });
-                    tableBody.appendChild(tr);
-                });
-              })
-              .catch(error => console.error('Error fetching data:', error));
-        }
+          const filteredRows = attendanceData.filter(row => {
+            const inputDate = row[4]; // 입력날짜는 5번째 열
+            const seatNumber = row[0]; // 자리번호는 1번째 열
+            const name = row[1]; // 이름은 2번째 열
+            return (selectedDate ? inputDate === selectedDate : true) && seatNumber === studentSeatNumber && name === studentName;
+          });
 
-        // 페이지 로드 시 출결 데이터 로드
-        window.onload = loadAttendanceData;
+          // 필터링된 데이터가 없으면 없다고 알림
+          if (filteredRows.length === 0) {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            td.colSpan = 6; // 모든 열을 차지
+            td.textContent = "해당 날짜와 자리번호, 이름에 맞는 데이터가 없습니다.";
+            tr.appendChild(td);
+            tableBody.appendChild(tr);
+          }
 
-        // 날짜 선택 시 필터링된 데이터 로드
-        document.getElementById('date-picker').addEventListener('change', loadAttendanceData);
+          // 필터링된 데이터 출력
+          filteredRows.forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+              const td = document.createElement("td");
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+          });
+        });
 
         // 햄버거 메뉴 클릭 시 메뉴 열기
         const hamburger = document.getElementById('hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
 
         hamburger.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
+          mobileMenu.classList.toggle('active');
         });
     </script>
 </body>
