@@ -187,6 +187,13 @@
 
     <div id="attendance-content">
         <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>자리번호</th>
+                    <th>이름</th>
+                    <th>출결 상태</th>
+                </tr>
+            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -237,22 +244,26 @@
                 const tableBody = document.querySelector('#attendance-table tbody');
                 tableBody.innerHTML = ''; // 기존 데이터를 초기화
 
-                // 첫 번째 행(헤더)을 숨기기 위한 변수
-                let isFirstRow = true;
-
-                // 모든 행을 표시
+                // 자리번호와 이름을 필터링하여 2행부터 매칭
                 data.values.forEach((row, rowIndex) => {
-                    // 첫 번째 행은 숨기고, 두 번째 행만 무조건 표시
-                    if (isFirstRow) {
-                        isFirstRow = false;
-                        return; // 첫 번째 행을 건너뜀
-                    }
+                    const seatNumber = row[0]; // 자리번호 (A열)
+                    const name = row[1]; // 이름 (B열)
 
-                    const tr = document.createElement('tr');
-                    row.forEach((cell, index) => {
-                        const td = document.createElement('td');
+                    // 자리번호와 이름이 매칭될 경우에만 표시
+                    if (seatNumber === studentSeatNumber && name === studentName) {
+                        const tr = document.createElement('tr');
 
-                        // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                        // 자리번호, 이름 열 표시
+                        const tdSeat = document.createElement('td');
+                        tdSeat.textContent = seatNumber;
+                        tr.appendChild(tdSeat);
+
+                        const tdName = document.createElement('td');
+                        tdName.textContent = name;
+                        tr.appendChild(tdName);
+
+                        // 선택한 날짜에 맞는 출결 상태 표시
+                        const tdAttendance = document.createElement('td');
                         const dateColumnIndexMap = {
                             '01-13': 6,
                             '01-14': 8,
@@ -263,29 +274,31 @@
                             '01-19': 18
                         };
 
-                        if (selectedDate && dateColumnIndexMap[selectedDate] === index) {
+                        if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
+                            const dateIndex = dateColumnIndexMap[selectedDate];
+                            const cell = row[dateIndex];
+
                             if (cell === '1') {
-                                td.textContent = '출석';
-                                td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                tdAttendance.textContent = '출석';
+                                tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
                             } else if (cell === '3') {
-                                td.textContent = '결석';
-                                td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                tdAttendance.textContent = '결석';
+                                tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
-                                td.textContent = cell;
+                                tdAttendance.textContent = '정보 없음';
                             }
-                        } else {
-                            td.textContent = cell;
                         }
-                        tr.appendChild(td);
-                    });
-                    tableBody.appendChild(tr);
+                        tr.appendChild(tdAttendance);
+
+                        tableBody.appendChild(tr);
+                    }
                 });
             }
         }
 
         // 처음 데이터 로드
         fetchAttendanceData();
-
+        
         // 햄버거 메뉴 기능
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
