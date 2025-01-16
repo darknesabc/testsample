@@ -212,8 +212,8 @@
             const formattedDate = formatDate(selectedDate);
             console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
 
-            // 선택된 날짜에 따라 출결 데이터 필터링 추가 가능
-            // 예: fetchAttendanceData(formattedDate);
+            // 선택된 날짜에 맞는 출결 데이터만 표시하도록 필터링
+            fetchAttendanceData(formattedDate); // 선택된 날짜로 필터링하여 출결 데이터 가져오기
         });
 
         function formatDate(dateString) {
@@ -224,7 +224,7 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData() {
+        async function fetchAttendanceData(selectedDate) {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -235,6 +235,8 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
+                tableBody.innerHTML = ''; // 기존 데이터 초기화
+
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
@@ -245,38 +247,19 @@
                         row.forEach((cell, index) => {
                             const td = document.createElement('td');
 
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            // 선택된 날짜와 매칭되는 열을 필터링
                             if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    } else if (rowIndex === 1) { // 2행도 포함
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
+                                const cellDate = formatDate(cell); // 날짜 비교
+                                if (cellDate === selectedDate) {
+                                    if (cell === '1') {
+                                        td.textContent = '출석';
+                                        td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                    } else if (cell === '3') {
+                                        td.textContent = '결석';
+                                        td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                    } else {
+                                        td.textContent = cell;
+                                    }
                                 }
                             } else {
                                 td.textContent = cell;
@@ -289,7 +272,8 @@
             }
         }
 
-        fetchAttendanceData();
+        // 첫 로드 시 출결 데이터 가져오기
+        fetchAttendanceData("");
 
         // 햄버거 메뉴 기능
         document.getElementById('hamburger').addEventListener('click', () => {
