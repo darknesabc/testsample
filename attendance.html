@@ -191,8 +191,8 @@
                 <tr>
                     <th>자리번호</th>
                     <th>이름</th>
+                    <th>앞선 열 데이터</th>
                     <th>출결 상태</th>
-                    <th id="previous-day-header">앞선 열 데이터</th>
                 </tr>
             </thead>
             <tbody>
@@ -250,7 +250,7 @@
 
         // "앞선 열 데이터" 헤더 업데이트
         function updatePreviousDayHeader(dayName) {
-            const previousDayHeader = document.querySelector("#previous-day-header");
+            const previousDayHeader = document.querySelector("#attendance-table th:nth-child(3)");
             previousDayHeader.textContent = `${dayName}`; // 예: 일요일
         }
 
@@ -286,8 +286,8 @@
                         tr.appendChild(tdName);
 
                         // 선택한 날짜에 맞는 출결 상태 표시
-                        const tdAttendance = document.createElement('td');
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
+                        const tdAttendance = document.createElement('td'); // 출결 상태 셀 추가
 
                         const dateColumnIndexMap = {
                             '01-13': 6,
@@ -314,17 +314,17 @@
                                 tdAttendance.textContent = '결석';
                                 tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
-                                tdAttendance.textContent = '정보 없음';
+                                tdAttendance.textContent = ''; // "정보 없음" 대신 공란으로 표시
                             }
 
-                            // 바로 앞 열 데이터 표시
-                            tdPreviousData.textContent = previousCell || '정보 없음';
+                            // 바로 앞 열 데이터 표시 (정보 없음은 공란으로 표시)
+                            tdPreviousData.textContent = previousCell || ''; 
 
                         }
 
                         // 테이블에 셀 추가
-                        tr.appendChild(tdAttendance);
                         tr.appendChild(tdPreviousData);
+                        tr.appendChild(tdAttendance);
 
                         tableBody.appendChild(tr);
                     }
