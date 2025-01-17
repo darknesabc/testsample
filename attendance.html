@@ -191,6 +191,7 @@
                 <tr>
                     <th>자리번호</th>
                     <th>이름</th>
+                    <th>교시</th>
                     <th>앞선 열 데이터</th>
                     <th>출결 상태</th>
                 </tr>
@@ -250,7 +251,7 @@
 
         // "앞선 열 데이터" 헤더 업데이트
         function updatePreviousDayHeader(dayName) {
-            const previousDayHeader = document.querySelector("#attendance-table th:nth-child(3)");
+            const previousDayHeader = document.querySelector("#attendance-table th:nth-child(4)");
             previousDayHeader.textContent = `${dayName}`; // 예: 일요일
         }
 
@@ -285,7 +286,11 @@
                         tdName.textContent = name;
                         tr.appendChild(tdName);
 
-                        // 선택한 날짜에 맞는 출결 상태 표시
+                        // 교시 열 표시 (예: C열이 교시일 경우)
+                        const tdClass = document.createElement('td');
+                        tdClass.textContent = row[2] || ''; // 교시 (C열) 데이터
+                        tr.appendChild(tdClass);
+
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
                         const tdAttendance = document.createElement('td'); // 출결 상태 셀 추가
 
