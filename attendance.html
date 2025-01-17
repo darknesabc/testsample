@@ -192,6 +192,7 @@
                     <th>자리번호</th>
                     <th>이름</th>
                     <th>출결 상태</th>
+                    <th>앞선 열 데이터</th>
                 </tr>
             </thead>
             <tbody>
@@ -264,6 +265,8 @@
 
                         // 선택한 날짜에 맞는 출결 상태 표시
                         const tdAttendance = document.createElement('td');
+                        const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
+
                         const dateColumnIndexMap = {
                             '01-13': 6,
                             '01-14': 8,
@@ -276,19 +279,30 @@
 
                         if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
                             const dateIndex = dateColumnIndexMap[selectedDate];
-                            const cell = row[dateIndex];
+                            const previousIndex = dateIndex - 1; // 바로 앞 열의 인덱스
+                            
+                            const currentCell = row[dateIndex]; // 선택된 날짜의 출결 상태
+                            const previousCell = row[previousIndex]; // 바로 앞 열의 데이터
 
-                            if (cell === '1') {
+                            // 출결 상태 처리
+                            if (currentCell === '1') {
                                 tdAttendance.textContent = '출석';
                                 tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                            } else if (cell === '3') {
+                            } else if (currentCell === '3') {
                                 tdAttendance.textContent = '결석';
                                 tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
                                 tdAttendance.textContent = '정보 없음';
                             }
+
+                            // 바로 앞 열 데이터 표시
+                            tdPreviousData.textContent = previousCell || '정보 없음';
+
                         }
+
+                        // 테이블에 셀 추가
                         tr.appendChild(tdAttendance);
+                        tr.appendChild(tdPreviousData);
 
                         tableBody.appendChild(tr);
                     }
@@ -296,20 +310,6 @@
             }
         }
 
-        // 처음 데이터 로드
-        fetchAttendanceData();
-        
-        // 햄버거 메뉴 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
-
-        // 로그아웃 버튼 클릭 시
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        });
     </script>
 </body>
 </html>
