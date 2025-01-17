@@ -192,7 +192,7 @@
                     <th>자리번호</th>
                     <th>이름</th>
                     <th>교시</th>
-                    <th>요일</th>
+                    <th>앞선 열 데이터</th>
                     <th>출결 상태</th>
                 </tr>
             </thead>
@@ -209,7 +209,23 @@
 
         // 이름, 자리번호, 학년이 없으면 로그인 페이지로 이동
         if (studentName && studentSeatNumber && studentGrade) {
-            document.getElementById('seatNameDisplay').innerText = `자리번호: $일"를 요일로 변경
+            document.getElementById('seatNameDisplay').innerText = `자리번호: ${studentSeatNumber}`;
+            document.getElementById('nameDisplay').innerText = `이름: ${studentName}`;
+            document.getElementById('gradeDisplay').innerText = `학년: ${studentGrade}`;
+        } else {
+            window.location.href = 'index.html';
+        }
+
+        // 날짜 선택기에서 선택한 날짜 형식을 mm-dd로 변환
+        document.getElementById('date-picker').addEventListener('change', function(event) {
+            const selectedDate = event.target.value; // 선택한 날짜 (yyyy-mm-dd 형식)
+            const formattedDate = formatDate(selectedDate);
+            console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
+
+            // 선택된 날짜에 따라 출결 데이터 필터링 추가
+            fetchAttendanceData(formattedDate);
+
+            // "앞선 열 데이터"를 요일로 변경
             const previousDay = getPreviousDay(selectedDate);
             updatePreviousDayHeader(previousDay);
         });
@@ -306,7 +322,7 @@
                                 tdAttendance.textContent = ''; // "정보 없음" 대신 공란으로 표시
                             }
 
-                            // 요일 표시 (정보 없음은 공란으로 표시)
+                            // 바로 앞 열 데이터 표시 (정보 없음은 공란으로 표시)
                             tdPreviousData.textContent = previousCell || ''; 
                         }
 
