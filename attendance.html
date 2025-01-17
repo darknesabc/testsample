@@ -288,7 +288,7 @@
 
                         // 교시 열 표시 (예: 5열이 교시일 경우)
                         const tdClass = document.createElement('td');
-                        tdClass.textContent = row[5] || ''; // 5열이 교시 데이터
+                        tdClass.textContent = row[4] || ''; // 5열이 교시 데이터
                         tr.appendChild(tdClass);
 
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
