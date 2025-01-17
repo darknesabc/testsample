@@ -191,7 +191,7 @@
                 <tr>
                     <th>자리번호</th>
                     <th>이름</th>
-                    <th>4열</th>  <!-- 4열 추가 -->
+                    <th>교시</th> <!-- 교시로 변경 -->
                     <th>출결 상태</th>
                 </tr>
             </thead>
@@ -254,7 +254,7 @@
                     if (seatNumber === studentSeatNumber && name === studentName) {
                         const tr = document.createElement('tr');
 
-                        // 자리번호, 이름, 4열 표시
+                        // 자리번호, 이름, 교시(5열) 표시
                         const tdSeat = document.createElement('td');
                         tdSeat.textContent = seatNumber;
                         tr.appendChild(tdSeat);
@@ -263,9 +263,9 @@
                         tdName.textContent = name;
                         tr.appendChild(tdName);
 
-                        const tdFourthColumn = document.createElement('td'); // 4열 추가
-                        tdFourthColumn.textContent = row[3] || '정보 없음'; // 4열 데이터 표시
-                        tr.appendChild(tdFourthColumn);
+                        const tdClass = document.createElement('td'); // 교시(5열)
+                        tdClass.textContent = row[4] || '정보 없음'; // 5열 데이터 표시
+                        tr.appendChild(tdClass);
 
                         // 선택한 날짜에 맞는 출결 상태 표시
                         const tdAttendance = document.createElement('td');
