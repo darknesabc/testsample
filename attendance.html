@@ -233,7 +233,7 @@
 
         function getWeekday(dateString) {
             const date = new Date(dateString);
-            const weekdays = ["월", "화", "수", "목", "금", "토", "일"]; // 월요일부터 일요일까지 배열로 수정
+            const weekdays = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"]; // 월요일부터 일요일까지 배열로 수정
             return weekdays[date.getDay()]; // getDay()는 0(일요일)부터 6(토요일)까지 반환
         }
 
