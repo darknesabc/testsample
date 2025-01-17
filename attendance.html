@@ -286,9 +286,9 @@
                         tdName.textContent = name;
                         tr.appendChild(tdName);
 
-                        // 교시 열 표시 (예: C열이 교시일 경우)
+                        // 교시 열 표시 (예: 5열이 교시일 경우)
                         const tdClass = document.createElement('td');
-                        tdClass.textContent = row[2] || ''; // 교시 (C열) 데이터
+                        tdClass.textContent = row[5] || ''; // 5열이 교시 데이터
                         tr.appendChild(tdClass);
 
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
@@ -324,7 +324,6 @@
 
                             // 바로 앞 열 데이터 표시 (정보 없음은 공란으로 표시)
                             tdPreviousData.textContent = previousCell || ''; 
-
                         }
 
                         // 테이블에 셀 추가
@@ -336,7 +335,6 @@
                 });
             }
         }
-
     </script>
 </body>
 </html>
