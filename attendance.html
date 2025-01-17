@@ -194,12 +194,6 @@
 
     <div id="attendance-content">
         <table id="attendance-table">
-            <thead>
-                <tr>
-                    <th>날짜</th>
-                    <th>출석 여부</th>
-                </tr>
-            </thead>
             <tbody>
                 <!-- 출결 데이터가 여기에 추가됩니다. -->
             </tbody>
@@ -226,8 +220,8 @@
             const weekday = getWeekday(selectedDate);
             document.getElementById('selected-date').innerText = `${weekday} ${formattedDate}`; // 요일과 날짜 형식으로 표시
 
-            // 선택된 날짜에 따라 출결 데이터 필터링 추가
-            fetchAttendanceData(formattedDate, selectedDate); // 선택된 날짜를 함께 전달
+            // 선택된 날짜에 따라 출결 데이터 필터링 추가 가능
+            // 예: fetchAttendanceData(formattedDate);
         });
 
         function formatDate(dateString) {
@@ -239,12 +233,12 @@
 
         function getWeekday(dateString) {
             const date = new Date(dateString);
-            const weekdays = ["일", "월", "화", "수", "목", "금", "토"]; // 요일을 3글자로 수정
+            const weekdays = ["일", "월", "화", "수", "목", "금", "토"]; // 월요일부터 일요일까지 배열로 수정
             return weekdays[date.getDay()]; // getDay()는 0(일요일)부터 6(토요일)까지 반환
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(formattedDate, selectedDate) {
+        async function fetchAttendanceData() {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const sheetName = '출결';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
@@ -255,49 +249,73 @@
             
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
-                tableBody.innerHTML = ''; // 이전 데이터 초기화
-
-                // 데이터에서 자리번호와 이름을 비교하여 출결 정보 필터링
                 data.values.forEach((row, rowIndex) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
 
+                    // 자리번호와 이름이 매칭될 경우에만 표시
                     if (seatNumber === studentSeatNumber && name === studentName) {
                         const tr = document.createElement('tr');
-                        // 해당 날짜 열에 대한 인덱스를 찾아서 해당 데이터 필터링
-                        const dateColumnIndex = getDateColumnIndex(formattedDate);
-                        const attendanceStatus = row[dateColumnIndex];
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
 
-                        const tdDate = document.createElement('td');
-                        tdDate.textContent = formattedDate;
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    } else if (rowIndex === 1) { // 2행도 포함
+                        const tr = document.createElement('tr');
+                        row.forEach((cell, index) => {
+                            const td = document.createElement('td');
 
-                        const tdStatus = document.createElement('td');
-                        if (attendanceStatus === '1') {
-                            tdStatus.textContent = '출석';
-                            tdStatus.classList.add('present');
-                        } else if (attendanceStatus === '3') {
-                            tdStatus.textContent = '결석';
-                            tdStatus.classList.add('absent');
-                        } else {
-                            tdStatus.textContent = '기타';
-                        }
-
-                        tr.appendChild(tdDate);
-                        tr.appendChild(tdStatus);
+                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
+                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
+                                if (cell === '1') {
+                                    td.textContent = '출석';
+                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    td.textContent = '결석';
+                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    td.textContent = cell;
+                                }
+                            } else {
+                                td.textContent = cell;
+                            }
+                            tr.appendChild(td);
+                        });
                         tableBody.appendChild(tr);
                     }
                 });
             }
         }
 
-        // 날짜와 출결 상태를 매핑하는 인덱스
-        function getDateColumnIndex(date) {
-            const dateMapping = {
-                '01-01': 6, '01-02': 8, '01-03': 10, '01-04': 12, '01-05': 14, '01-06': 16, '01-07': 18,
-                // 날짜와 열을 매핑하는 추가 규칙 필요
-            };
-            return dateMapping[date] || -1; // 예시 매핑 (실제 날짜와 열 인덱스를 맞추세요)
-        }
+        fetchAttendanceData();
+
+        // 햄버거 메뉴 기능
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // 로그아웃 버튼 클릭 시
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
