@@ -105,7 +105,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- 출결 데이터가 여기에 추가됩니다. -->
+                <!-- 동적으로 추가되는 데이터가 들어갈 곳 -->
             </tbody>
         </table>
     </div>
@@ -155,7 +155,7 @@
                 tableBody.innerHTML = ''; // 기존 데이터를 초기화
 
                 // 자리번호와 이름을 필터링하여 2행부터 매칭
-                data.values.forEach((row, rowIndex) => {
+                data.values.forEach((row) => {
                     const seatNumber = row[0]; // 자리번호 (A열)
                     const name = row[1]; // 이름 (B열)
 
