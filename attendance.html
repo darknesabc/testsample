@@ -191,8 +191,8 @@
                 <tr>
                     <th>자리번호</th>
                     <th>이름</th>
+                    <th>스케줄</th>
                     <th>출결 상태</th>
-                    <th>앞선 열 데이터</th>
                 </tr>
             </thead>
             <tbody>
@@ -263,10 +263,8 @@
                         tdName.textContent = name;
                         tr.appendChild(tdName);
 
-                        // 선택한 날짜에 맞는 출결 상태 표시
-                        const tdAttendance = document.createElement('td');
-                        const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
-
+                        // "스케줄" 열 처리
+                        const tdSchedule = document.createElement('td');
                         const dateColumnIndexMap = {
                             '01-13': 6,
                             '01-14': 8,
@@ -277,12 +275,21 @@
                             '01-19': 18
                         };
 
+                        let scheduleData = '';
                         if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
                             const dateIndex = dateColumnIndexMap[selectedDate];
                             const previousIndex = dateIndex - 1; // 바로 앞 열의 인덱스
                             
+                            scheduleData = row[previousIndex] || ''; // 스케줄 데이터가 없으면 공란 처리
+                        }
+                        tdSchedule.textContent = scheduleData; // 스케줄 데이터 표시
+                        tr.appendChild(tdSchedule);
+
+                        // 출결 상태 표시
+                        const tdAttendance = document.createElement('td');
+                        if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
+                            const dateIndex = dateColumnIndexMap[selectedDate];
                             const currentCell = row[dateIndex]; // 선택된 날짜의 출결 상태
-                            const previousCell = row[previousIndex]; // 바로 앞 열의 데이터
 
                             // 출결 상태 처리
                             if (currentCell === '1') {
@@ -292,17 +299,10 @@
                                 tdAttendance.textContent = '결석';
                                 tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
-                                tdAttendance.textContent = '정보 없음';
+                                tdAttendance.textContent = ''; // 정보 없음은 공란
                             }
-
-                            // 바로 앞 열 데이터 표시
-                            tdPreviousData.textContent = previousCell || '정보 없음';
-
                         }
-
-                        // 테이블에 셀 추가
                         tr.appendChild(tdAttendance);
-                        tr.appendChild(tdPreviousData);
 
                         tableBody.appendChild(tr);
                     }
