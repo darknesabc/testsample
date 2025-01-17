@@ -240,7 +240,7 @@
         // 날짜에서 요일을 구하는 함수 (0 = 일요일, 1 = 월요일, ..., 6 = 토요일)
         function getPreviousDay(dateString) {
             const date = new Date(dateString);
-            date.setDate(date.getDate() - 1); // 하루 전으로 설정
+            date.setDate(date.getDate()); // 하루 전으로 설정
             const dayOfWeek = date.getDay(); // 요일 숫자 (0~6)
 
             // 요일 이름 배열
