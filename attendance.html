@@ -223,6 +223,10 @@
 
             // 선택된 날짜에 따라 출결 데이터 필터링 추가
             fetchAttendanceData(formattedDate);
+
+            // "앞선 열 데이터"를 요일로 변경
+            const previousDay = getPreviousDay(selectedDate);
+            updatePreviousDayHeader(previousDay);
         });
 
         function formatDate(dateString) {
@@ -230,6 +234,24 @@
             const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
             const day = String(date.getDate()).padStart(2, '0');
             return `${month}-${day}`; // mm-dd 형식
+        }
+
+        // 날짜에서 요일을 구하는 함수 (0 = 일요일, 1 = 월요일, ..., 6 = 토요일)
+        function getPreviousDay(dateString) {
+            const date = new Date(dateString);
+            date.setDate(date.getDate() - 1); // 하루 전으로 설정
+            const dayOfWeek = date.getDay(); // 요일 숫자 (0~6)
+
+            // 요일 이름 배열
+            const daysOfWeek = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+
+            return daysOfWeek[dayOfWeek]; // 요일 이름 반환
+        }
+
+        // "앞선 열 데이터" 헤더 업데이트
+        function updatePreviousDayHeader(dayName) {
+            const previousDayHeader = document.querySelector("#attendance-table thead th:last-child");
+            previousDayHeader.textContent = `앞선 열 데이터 (${dayName})`; // 예: 앞선 열 데이터 (목요일)
         }
 
         // 출결 데이터 가져오기
@@ -309,7 +331,6 @@
                 });
             }
         }
-
     </script>
 </body>
 </html>
