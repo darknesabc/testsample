@@ -202,6 +202,8 @@
                     <th>이름</th>
                     <th>교시</th> <!-- 교시로 변경 -->
                     <th>출결 상태</th>
+                    <th>요일</th>
+                    <th>날짜</th>
                 </tr>
             </thead>
             <tbody>
@@ -234,7 +236,7 @@
             document.getElementById('selected-date').textContent = `${dayOfWeek}, ${formattedDate}`;
             
             // 선택된 날짜에 따라 출결 데이터 필터링 추가
-            fetchAttendanceData(formattedDate);
+            fetchAttendanceData(formattedDate, dayOfWeek);
         });
 
         function formatDate(dateString) {
@@ -252,7 +254,7 @@
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate = '') {
+        async function fetchAttendanceData(selectedDate = '', dayOfWeek = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
             const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
@@ -314,8 +316,17 @@
                                 }
                             }
                         }
-                        tr.appendChild(tdAttendance);
 
+                        // 요일, 날짜 추가
+                        const tdDay = document.createElement('td');
+                        tdDay.textContent = dayOfWeek; // 요일
+                        tr.appendChild(tdDay);
+
+                        const tdDate = document.createElement('td');
+                        tdDate.textContent = selectedDate; // 날짜
+                        tr.appendChild(tdDate);
+
+                        tr.appendChild(tdAttendance);
                         tableBody.appendChild(tr);
                     }
                 });
