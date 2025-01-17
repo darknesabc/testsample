@@ -192,7 +192,7 @@
                     <th>자리번호</th>
                     <th>이름</th>
                     <th>출결 상태</th>
-                    <th>앞선 열 데이터</th>
+                    <th id="previous-day-header">앞선 열 데이터</th>
                 </tr>
             </thead>
             <tbody>
@@ -243,14 +243,14 @@
             const dayOfWeek = date.getDay(); // 요일 숫자 (0~6)
 
             // 요일 이름 배열
-            const daysOfWeek = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
 
             return daysOfWeek[dayOfWeek]; // 요일 이름 반환
         }
 
         // "앞선 열 데이터" 헤더 업데이트
         function updatePreviousDayHeader(dayName) {
-            const previousDayHeader = document.querySelector("#attendance-table thead th:last-child");
+            const previousDayHeader = document.querySelector("#previous-day-header");
             previousDayHeader.textContent = `앞선 열 데이터 (${dayName})`; // 예: 앞선 열 데이터 (목요일)
         }
 
