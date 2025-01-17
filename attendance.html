@@ -139,6 +139,11 @@
             padding: 10px;
             font-size: 16px;
         }
+
+        #selected-date {
+            margin: 20px 0;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -184,6 +189,8 @@
     <!-- 날짜 선택기 추가 -->
     <label for="date-picker">날짜 선택: </label>
     <input type="date" id="date-picker" name="date" value="" />
+    
+    <div id="selected-date"></div> <!-- 선택된 날짜와 요일을 표시할 영역 -->
 
     <div id="attendance-content">
         <table id="attendance-table">
@@ -206,11 +213,12 @@
             window.location.href = 'index.html';
         }
 
-        // 날짜 선택기에서 선택한 날짜 형식을 mm-dd로 변환
+        // 날짜 선택기에서 선택한 날짜 형식을 mm-dd(요일)로 변환
         document.getElementById('date-picker').addEventListener('change', function(event) {
             const selectedDate = event.target.value; // 선택한 날짜 (yyyy-mm-dd 형식)
             const formattedDate = formatDate(selectedDate);
-            console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
+            const weekday = getWeekday(selectedDate);
+            document.getElementById('selected-date').innerText = `${formattedDate} (${weekday})`; // 요일 추가
 
             // 선택된 날짜에 따라 출결 데이터 필터링 추가 가능
             // 예: fetchAttendanceData(formattedDate);
@@ -221,6 +229,12 @@
             const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
             const day = String(date.getDate()).padStart(2, '0');
             return `${month}-${day}`; // mm-dd 형식
+        }
+
+        function getWeekday(dateString) {
+            const date = new Date(dateString);
+            const weekdays = ["월", "화", "수", "목", "금", "토", "일"]; // 월요일부터 일요일까지 배열로 수정
+            return weekdays[date.getDay() - 1 < 0 ? 6 : date.getDay() - 1]; // getDay()가 0일 때는 일요일, 이를 조정하여 월요일부터 시작하도록
         }
 
         // 출결 데이터 가져오기
@@ -246,28 +260,6 @@
                             const td = document.createElement('td');
 
                             // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리 (index: 6, 8, 10, 12, 14, 16, 18)
-                            if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
-                                if (cell === '1') {
-                                    td.textContent = '출석';
-                                    td.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    td.textContent = '결석';
-                                    td.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    td.textContent = cell;
-                                }
-                            } else {
-                                td.textContent = cell;
-                            }
-                            tr.appendChild(td);
-                        });
-                        tableBody.appendChild(tr);
-                    } else if (rowIndex === 1) { // 2행도 포함
-                        const tr = document.createElement('tr');
-                        row.forEach((cell, index) => {
-                            const td = document.createElement('td');
-
-                            // 날짜에 해당하는 G, I, K, M, O, Q, S 열 처리
                             if ([6, 8, 10, 12, 14, 16, 18].includes(index)) {
                                 if (cell === '1') {
                                     td.textContent = '출석';
