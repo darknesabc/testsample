@@ -201,7 +201,6 @@
                     <th>자리번호</th>
                     <th>이름</th>
                     <th>교시</th> <!-- 교시로 변경 -->
-                    <th>출결 상태</th>
                     <th>요일</th>
                     <th>날짜</th>
                 </tr>
@@ -249,12 +248,12 @@
         // 요일을 "월요일", "화요일" 형식으로 가져오는 함수
         function getDayOfWeek(dateString) {
             const date = new Date(dateString);
-            const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']; // 요일 배열
-            return daysOfWeek[date.getDay()]; // 선택된 날짜의 요일 반환
+            const daysOfWeek = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
+            return daysOfWeek[date.getDay()];
         }
 
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate = '', dayOfWeek = '') {
+        async function fetchAttendanceData(selectedDate, dayOfWeek) {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
             const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
@@ -288,36 +287,7 @@
                         tdClass.textContent = row[4] || '정보 없음'; // 5열 데이터 표시
                         tr.appendChild(tdClass);
 
-                        // 선택한 날짜에 맞는 출결 상태 표시 (선택한 날짜와 이전 날짜 포함)
-                        const tdAttendance = document.createElement('td');
-                        const dateColumnIndexMap = {
-                            '01-13': 6,
-                            '01-14': 8,
-                            '01-15': 10,
-                            '01-16': 12,
-                            '01-17': 14,
-                            '01-18': 16,
-                            '01-19': 18
-                        };
-
-                        // 선택한 날짜와 그 이전 날짜들의 출결 상태를 표시
-                        if (selectedDate) {
-                            const selectedDateIndex = dateColumnIndexMap[selectedDate];
-                            if (selectedDateIndex !== undefined) {
-                                const cell = row[selectedDateIndex];
-                                if (cell === '1') {
-                                    tdAttendance.textContent = '출석';
-                                    tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                                } else if (cell === '3') {
-                                    tdAttendance.textContent = '결석';
-                                    tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                                } else {
-                                    tdAttendance.textContent = '정보 없음';
-                                }
-                            }
-                        }
-
-                        // 요일, 날짜 추가
+                        // 요일과 날짜 표시
                         const tdDay = document.createElement('td');
                         tdDay.textContent = dayOfWeek; // 요일
                         tr.appendChild(tdDay);
@@ -326,7 +296,6 @@
                         tdDate.textContent = selectedDate; // 날짜
                         tr.appendChild(tdDate);
 
-                        tr.appendChild(tdAttendance);
                         tableBody.appendChild(tr);
                     }
                 });
@@ -335,7 +304,7 @@
 
         // 처음 데이터 로드
         fetchAttendanceData();
-        
+
         // 햄버거 메뉴 기능
         document.getElementById('hamburger').addEventListener('click', () => {
             const mobileMenu = document.getElementById('mobile-menu');
