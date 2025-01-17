@@ -267,7 +267,7 @@
                         tdClass.textContent = row[4] || '정보 없음'; // 5열 데이터 표시
                         tr.appendChild(tdClass);
 
-                        // 선택한 날짜에 맞는 출결 상태 표시
+                        // 선택한 날짜에 맞는 출결 상태 표시 (선택한 날짜와 이전 날짜 포함)
                         const tdAttendance = document.createElement('td');
                         const dateColumnIndexMap = {
                             '01-13': 6,
@@ -279,18 +279,20 @@
                             '01-19': 18
                         };
 
-                        if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
-                            const dateIndex = dateColumnIndexMap[selectedDate];
-                            const cell = row[dateIndex];
-
-                            if (cell === '1') {
-                                tdAttendance.textContent = '출석';
-                                tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                            } else if (cell === '3') {
-                                tdAttendance.textContent = '결석';
-                                tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                            } else {
-                                tdAttendance.textContent = '정보 없음';
+                        // 선택한 날짜와 그 이전 날짜들의 출결 상태를 표시
+                        if (selectedDate) {
+                            const selectedDateIndex = dateColumnIndexMap[selectedDate];
+                            if (selectedDateIndex !== undefined) {
+                                const cell = row[selectedDateIndex];
+                                if (cell === '1') {
+                                    tdAttendance.textContent = '출석';
+                                    tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    tdAttendance.textContent = '결석';
+                                    tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    tdAttendance.textContent = '정보 없음';
+                                }
                             }
                         }
                         tr.appendChild(tdAttendance);
