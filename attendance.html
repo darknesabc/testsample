@@ -45,136 +45,39 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        #welcome {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        .separator {
-            border-left: 1px solid #333;
-            height: 20px;
-            margin: 0 5px;
-        }
-        #mobile-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #mobile-menu a {
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .hamburger div {
-            width: 25px;
-            height: 3px;
-            background-color: #333;
-        }
         #attendance-content {
             padding: 10px;
         }
         #attendance-table {
             width: 100%;
-            border-collapse: collapse; /* 테두리 겹침 방지 */
+            border-collapse: collapse;
         }
         #attendance-table th,
         #attendance-table td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
-            white-space: nowrap; /* 텍스트를 한 줄로 유지 */
-            overflow: hidden; /* 넘치는 텍스트 숨김 */
-            text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        /* 출석 상태에 따른 배경색 */
         .present {
-            background-color: #d4f4d7; /* 연한 초록색 */
+            background-color: #d4f4d7;
         }
         .absent {
-            background-color: #f4cccc; /* 연한 빨간색 */
+            background-color: #f4cccc;
         }
-        /* 반응형 스타일 */
-        @media (max-width: 768px) {
-            nav {
-                display: none; /* PC에서는 숨김 */
-            }
-            .hamburger {
-                display: flex; /* 모바일에서 햄버거 메뉴 표시 */
-            }
-            #mobile-menu {
-                display: none; /* 모바일 메뉴 기본적으로 숨김 */
-            }
-            #mobile-menu.active {
-                display: flex; /* 활성화된 모바일 메뉴 표시 */
-            }
-            #attendance-table th, #attendance-table td {
-                font-size: 14px; /* 모바일에서 글자 크기 조정 */
-            }
-        }
-
-        @media (min-width: 768px) and (max-width: 1024px) {
-            #attendance-table th, #attendance-table td {
-                font-size: 16px; /* 태블릿에서 글자 크기 조정 */
-            }
-        }
-
         /* 날짜 선택기 스타일 */
         #date-picker {
             margin: 20px 0;
             padding: 10px;
             font-size: 16px;
         }
-
-        /* 선택된 날짜와 요일 표시 */
-        #selected-date {
-            margin-top: 10px;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
     <header>
         <a href="student-dashboard.html" style="color: #333; font-size: 24px;">🏠</a>
-        
-        <div class="hamburger" id="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
-        <nav>
-            <a href="attendance.html">출결현황</a>
-            <a href="Movementlog.html">이동일지</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </nav>
-
-        <div id="mobile-menu">
-            <a href="attendance.html">출결현황</a>
-            <a href="Movementlog.html">이동일지</a>
-            <a href="#menu3">메뉴3</a>
-            <a href="#menu4">메뉴4</a>
-            <a href="#menu5">메뉴5</a>
-            <a href="#menu6">메뉴6</a>
-        </div>
-
         <div id="student-info">
             <span id="seatNameDisplay"></span>
             <div class="separator"></div>
@@ -187,12 +90,8 @@
 
     <h1>출결현황</h1>
 
-    <!-- 날짜 선택기 추가 -->
     <label for="date-picker">날짜 선택: </label>
     <input type="date" id="date-picker" name="date" value="" />
-
-    <!-- 선택된 날짜와 요일을 표시할 부분 -->
-    <p id="selected-date"></p> <!-- 여기에 요일과 날짜가 표시됩니다. -->
 
     <div id="attendance-content">
         <table id="attendance-table">
@@ -200,10 +99,9 @@
                 <tr>
                     <th>자리번호</th>
                     <th>이름</th>
-                    <th>교시</th> <!-- 교시로 변경 -->
-                    <th>요일</th>
-                    <th>날짜</th>
-                    <th>출결 상태</th> <!-- 출결 상태 표시 -->
+                    <th>교시</th>
+                    <th>출결 상태 (선택한 날짜)</th>
+                    <th>출결 상태 (이전 날짜)</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,13 +128,10 @@
         document.getElementById('date-picker').addEventListener('change', function(event) {
             const selectedDate = event.target.value; // 선택한 날짜 (yyyy-mm-dd 형식)
             const formattedDate = formatDate(selectedDate);
-            const dayOfWeek = getDayOfWeek(selectedDate); // 요일을 "월요일", "화요일" 형식으로 가져옵니다.
-            
-            // 선택된 날짜와 요일을 표시
-            document.getElementById('selected-date').textContent = `${dayOfWeek}, ${formattedDate}`;
-            
-            // 선택된 날짜에 따라 출결 데이터 필터링 추가
-            fetchAttendanceData(formattedDate, dayOfWeek);
+            console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
+
+            // 선택된 날짜에 맞는 출결 상태 데이터를 표시
+            fetchAttendanceData(formattedDate);
         });
 
         function formatDate(dateString) {
@@ -246,15 +141,8 @@
             return `${month}-${day}`; // mm-dd 형식
         }
 
-        // 요일을 "월요일", "화요일" 형식으로 가져오는 함수
-        function getDayOfWeek(dateString) {
-            const date = new Date(dateString);
-            const daysOfWeek = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-            return daysOfWeek[date.getDay()];
-        }
-
         // 출결 데이터 가져오기
-        async function fetchAttendanceData(selectedDate, dayOfWeek) {
+        async function fetchAttendanceData(selectedDate = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
             const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
             const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
@@ -288,17 +176,10 @@
                         tdClass.textContent = row[4] || '정보 없음'; // 5열 데이터 표시
                         tr.appendChild(tdClass);
 
-                        // 요일과 날짜 표시
-                        const tdDay = document.createElement('td');
-                        tdDay.textContent = dayOfWeek; // 요일
-                        tr.appendChild(tdDay);
-
-                        const tdDate = document.createElement('td');
-                        tdDate.textContent = selectedDate; // 날짜
-                        tr.appendChild(tdDate);
-
-                        // 선택된 날짜에 맞는 출결 상태 표시
-                        const tdAttendance = document.createElement('td');
+                        // 선택한 날짜와 그 이전 날짜들의 출결 상태를 표시
+                        const tdAttendanceCurrent = document.createElement('td');
+                        const tdAttendancePrevious = document.createElement('td');
+                        
                         const dateColumnIndexMap = {
                             '01-13': 6,
                             '01-14': 8,
@@ -310,20 +191,41 @@
                         };
 
                         // 선택한 날짜와 그 이전 날짜들의 출결 상태를 표시
-                        const selectedDateIndex = dateColumnIndexMap[selectedDate];
-                        if (selectedDateIndex !== undefined) {
-                            const cell = row[selectedDateIndex];
-                            if (cell === '1') {
-                                tdAttendance.textContent = '출석';
-                                tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
-                            } else if (cell === '3') {
-                                tdAttendance.textContent = '결석';
-                                tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
-                            } else {
-                                tdAttendance.textContent = '정보 없음';
+                        if (selectedDate) {
+                            const selectedDateIndex = dateColumnIndexMap[selectedDate];
+                            const previousDateIndex = selectedDateIndex - 2; // 바로 이전 날짜는 -2 열에 해당
+                            
+                            // 선택된 날짜 출결 상태
+                            if (selectedDateIndex !== undefined) {
+                                const cell = row[selectedDateIndex];
+                                if (cell === '1') {
+                                    tdAttendanceCurrent.textContent = '출석';
+                                    tdAttendanceCurrent.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                                } else if (cell === '3') {
+                                    tdAttendanceCurrent.textContent = '결석';
+                                    tdAttendanceCurrent.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                                } else {
+                                    tdAttendanceCurrent.textContent = '정보 없음';
+                                }
+                            }
+
+                            // 이전 날짜 출결 상태
+                            if (previousDateIndex >= 0) {
+                                const previousCell = row[previousDateIndex];
+                                if (previousCell === '1') {
+                                    tdAttendancePrevious.textContent = '출석';
+                                    tdAttendancePrevious.classList.add('present');
+                                } else if (previousCell === '3') {
+                                    tdAttendancePrevious.textContent = '결석';
+                                    tdAttendancePrevious.classList.add('absent');
+                                } else {
+                                    tdAttendancePrevious.textContent = '정보 없음';
+                                }
                             }
                         }
-                        tr.appendChild(tdAttendance);
+
+                        tr.appendChild(tdAttendanceCurrent);
+                        tr.appendChild(tdAttendancePrevious);
 
                         tableBody.appendChild(tr);
                     }
@@ -333,18 +235,6 @@
 
         // 처음 데이터 로드
         fetchAttendanceData();
-
-        // 햄버거 메뉴 기능
-        document.getElementById('hamburger').addEventListener('click', () => {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('active');
-        });
-
-        // 로그아웃 버튼 클릭 시
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        });
     </script>
 </body>
 </html>
