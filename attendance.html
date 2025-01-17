@@ -246,53 +246,95 @@
             // 요일 이름 배열
             const daysOfWeek = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
-            return daysOfWeek[dayOfWeek];
+            return daysOfWeek[dayOfWeek]; // 요일 이름 반환
         }
 
-        function updatePreviousDayHeader(previousDay) {
-            // "앞선 열 데이터"를 선택하여 업데이트
-            const headerCells = document.querySelectorAll('#attendance-table th');
-            if (headerCells.length > 3) {
-                headerCells[3].innerText = `앞선 열 데이터: ${previousDay}`;
+        // "앞선 열 데이터" 헤더 업데이트
+        function updatePreviousDayHeader(dayName) {
+            const previousDayHeader = document.querySelector("#attendance-table th:nth-child(4)");
+            previousDayHeader.textContent = `${dayName}`; // 예: 일요일
+        }
+
+        // 출결 데이터 가져오기
+        async function fetchAttendanceData(selectedDate = '') {
+            const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
+            const apiKey = 'AIzaSyDeS-WjQLmzG7yw1_GWu5Tw3HwFxG5hYbk';
+            const range = '출결!A:S'; // A열부터 S열까지 데이터 가져오기
+            
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
+            const data = await response.json();
+            
+            if (data.values && data.values.length > 0) {
+                const tableBody = document.querySelector('#attendance-table tbody');
+                tableBody.innerHTML = ''; // 기존 데이터를 초기화
+
+                // 자리번호와 이름을 필터링하여 2행부터 매칭
+                data.values.forEach((row, rowIndex) => {
+                    const seatNumber = row[0]; // 자리번호 (A열)
+                    const name = row[1]; // 이름 (B열)
+
+                    // 자리번호와 이름이 매칭될 경우에만 표시
+                    if (seatNumber === studentSeatNumber && name === studentName) {
+                        const tr = document.createElement('tr');
+
+                        // 자리번호, 이름 열 표시
+                        const tdSeat = document.createElement('td');
+                        tdSeat.textContent = seatNumber;
+                        tr.appendChild(tdSeat);
+
+                        const tdName = document.createElement('td');
+                        tdName.textContent = name;
+                        tr.appendChild(tdName);
+
+                        // 교시 열 표시 (예: 5열이 교시일 경우)
+                        const tdClass = document.createElement('td');
+                        tdClass.textContent = row[4] || ''; // 5열이 교시 데이터
+                        tr.appendChild(tdClass);
+
+                        const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
+                        const tdAttendance = document.createElement('td'); // 출결 상태 셀 추가
+
+                        const dateColumnIndexMap = {
+                            '01-13': 6,
+                            '01-14': 8,
+                            '01-15': 10,
+                            '01-16': 12,
+                            '01-17': 14,
+                            '01-18': 16,
+                            '01-19': 18
+                        };
+
+                        if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
+                            const dateIndex = dateColumnIndexMap[selectedDate];
+                            const previousIndex = dateIndex - 1; // 바로 앞 열의 인덱스
+                            
+                            const currentCell = row[dateIndex]; // 선택된 날짜의 출결 상태
+                            const previousCell = row[previousIndex]; // 바로 앞 열의 데이터
+
+                            // 출결 상태 처리
+                            if (currentCell === '1') {
+                                tdAttendance.textContent = '출석';
+                                tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
+                            } else if (currentCell === '3') {
+                                tdAttendance.textContent = '결석';
+                                tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
+                            } else {
+                                tdAttendance.textContent = ''; // "정보 없음" 대신 공란으로 표시
+                            }
+
+                            // 바로 앞 열 데이터 표시 (정보 없음은 공란으로 표시)
+                            tdPreviousData.textContent = previousCell || ''; 
+                        }
+
+                        // 테이블에 셀 추가
+                        tr.appendChild(tdPreviousData);
+                        tr.appendChild(tdAttendance);
+
+                        tableBody.appendChild(tr);
+                    }
+                });
             }
         }
-
-        function fetchAttendanceData(formattedDate) {
-            const attendanceData = [
-                { seatNumber: 1, name: '홍길동', subject: '수학', status: 'present' },
-                { seatNumber: 2, name: '김철수', subject: '영어', status: 'absent' },
-                { seatNumber: 3, name: '이영희', subject: '과학', status: 'present' },
-                { seatNumber: 4, name: '박민수', subject: '사회', status: 'absent' }
-            ];
-
-            const tbody = document.querySelector('#attendance-table tbody');
-            tbody.innerHTML = ''; // 기존 테이블 내용 제거
-
-            attendanceData.forEach(data => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.seatNumber}</td>
-                    <td>${data.name}</td>
-                    <td>${data.subject}</td>
-                    <td>${formattedDate}</td>
-                    <td class="${data.status}">${data.status === 'present' ? '출석' : '결석'}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // 햄버거 메뉴 토글
-        document.getElementById('hamburger').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-        });
-
-        // 로그아웃 버튼
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            localStorage.removeItem('studentName');
-            localStorage.removeItem('studentSeatNumber');
-            localStorage.removeItem('studentGrade');
-            window.location.href = 'index.html';
-        });
     </script>
 </body>
 </html>
