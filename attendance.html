@@ -256,7 +256,7 @@
                     const name = row[1]; // 이름 (B열)
 
                     // 자리번호와 이름이 매칭될 경우에만 표시
-                    if (seatNumber === studentSeatNumber && name === studentName) {
+                    if ((seatNumber === studentSeatNumber && name === studentName) || rowIndex === 1) {
                         const tr = document.createElement('tr');
                         
                         row.forEach((cell, index) => {
