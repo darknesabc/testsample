@@ -139,6 +139,12 @@
             padding: 10px;
             font-size: 16px;
         }
+
+        /* 선택된 날짜와 요일 표시 */
+        #selected-date {
+            margin-top: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -185,6 +191,9 @@
     <label for="date-picker">날짜 선택: </label>
     <input type="date" id="date-picker" name="date" value="" />
 
+    <!-- 선택된 날짜와 요일을 표시할 부분 -->
+    <p id="selected-date"></p> <!-- 여기에 요일과 날짜가 표시됩니다. -->
+
     <div id="attendance-content">
         <table id="attendance-table">
             <thead>
@@ -219,8 +228,11 @@
         document.getElementById('date-picker').addEventListener('change', function(event) {
             const selectedDate = event.target.value; // 선택한 날짜 (yyyy-mm-dd 형식)
             const formattedDate = formatDate(selectedDate);
-            console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
-
+            const dayOfWeek = getDayOfWeek(selectedDate); // 요일을 "월요일", "화요일" 형식으로 가져옵니다.
+            
+            // 선택된 날짜와 요일을 표시
+            document.getElementById('selected-date').textContent = `${dayOfWeek}, ${formattedDate}`;
+            
             // 선택된 날짜에 따라 출결 데이터 필터링 추가
             fetchAttendanceData(formattedDate);
         });
@@ -230,6 +242,13 @@
             const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
             const day = String(date.getDate()).padStart(2, '0');
             return `${month}-${day}`; // mm-dd 형식
+        }
+
+        // 요일을 "월요일", "화요일" 형식으로 가져오는 함수
+        function getDayOfWeek(dateString) {
+            const date = new Date(dateString);
+            const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']; // 요일 배열
+            return daysOfWeek[date.getDay()]; // 선택된 날짜의 요일 반환
         }
 
         // 출결 데이터 가져오기
