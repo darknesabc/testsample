@@ -255,6 +255,15 @@
             previousDayHeader.textContent = `${dayName}`; // 예: 일요일
         }
 
+        // 셀 문자를 열 번호로 변환하는 함수 (A = 1, B = 2, ..., Z = 26)
+        function columnToIndex(col) {
+            let index = 0;
+            for (let i = 0; i < col.length; i++) {
+                index = index * 26 + (col.charCodeAt(i) - 65 + 1);
+            }
+            return index;
+        }
+
         // 출결 데이터 가져오기
         async function fetchAttendanceData(selectedDate = '') {
             const sheetId = '199CxKW0EHGTVHMwDIEmNJ5LsOcPxyFUtQv52osl7jTY';
@@ -294,18 +303,10 @@
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
                         const tdAttendance = document.createElement('td'); // 출결 상태 셀 추가
 
-                        const dateColumnIndexMap = {
-                            '01-13': 6,
-                            '01-14': 8,
-                            '01-15': 10,
-                            '01-16': 12,
-                            '01-17': 14,
-                            '01-18': 16,
-                            '01-19': 18
-                        };
-
+                        // 날짜 열 주소 변환
                         if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
-                            const dateIndex = dateColumnIndexMap[selectedDate];
+                            const dateColumn = dateColumnIndexMap[selectedDate];  // G, H, I 등
+                            const dateIndex = columnToIndex(dateColumn) - 1; // 열 인덱스로 변환
                             const previousIndex = dateIndex - 1; // 바로 앞 열의 인덱스
                             
                             const currentCell = row[dateIndex]; // 선택된 날짜의 출결 상태
