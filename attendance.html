@@ -222,7 +222,7 @@
             const formattedDate = formatDate(selectedDate);
             console.log("선택한 날짜:", formattedDate); // mm-dd 형식 출력
 
-            // 선택된 날짜에 맞는 출결 데이터 필터링
+            // 선택된 날짜에 따라 출결 데이터 필터링 추가
             fetchAttendanceData(formattedDate);
 
             // "앞선 열 데이터"를 요일로 변경
@@ -237,41 +237,22 @@
             return `${month}-${day}`; // mm-dd 형식
         }
 
-        // 선택한 날짜가 속한 주의 월요일을 구하는 함수
-        function getMondayOfWeek(dateString) {
+        // 날짜에서 요일을 구하는 함수 (0 = 일요일, 1 = 월요일, ..., 6 = 토요일)
+        function getPreviousDay(dateString) {
             const date = new Date(dateString);
-            const dayOfWeek = date.getDay(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+            date.setDate(date.getDate()); // 하루로 설정
+            const dayOfWeek = date.getDay(); // 요일 숫자 (0~6)
 
-            // 월요일 날짜를 구하기 위해 일요일로부터 차이를 구하여 계산
-            const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // 월요일로 조정
-            date.setDate(diff);
+            // 요일 이름 배열
+            const daysOfWeek = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${month}-${day}`; // 월요일 날짜를 mm-dd 형식으로 반환
+            return daysOfWeek[dayOfWeek]; // 요일 이름 반환
         }
 
-        // 날짜별 열 인덱스 매핑
-        function getDateColumnIndex(selectedDate) {
-            const mondayDate = getMondayOfWeek(selectedDate); // 선택한 날짜의 주 월요일 구하기
-            const weekStartDate = new Date(`${mondayDate}-2025`); // 2025년을 기준으로 날짜 계산
-
-            const dateColumnIndexMap = {};
-
-            // 월요일부터 일요일까지 날짜 생성
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(weekStartDate);
-                date.setDate(weekStartDate.getDate() + i);
-                
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const dateKey = `${month}-${day}`;
-                
-                // 날짜에 맞는 열 인덱스 (G열부터 시작)
-                dateColumnIndexMap[dateKey] = 6 + 2 * i;
-            }
-
-            return dateColumnIndexMap[selectedDate]; // 선택된 날짜에 해당하는 열 인덱스 반환
+        // "앞선 열 데이터" 헤더 업데이트
+        function updatePreviousDayHeader(dayName) {
+            const previousDayHeader = document.querySelector("#attendance-table th:nth-child(4)");
+            previousDayHeader.textContent = `${dayName}`; // 예: 일요일
         }
 
         // 출결 데이터 가져오기
@@ -282,7 +263,7 @@
             
             const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`);
             const data = await response.json();
-
+            
             if (data.values && data.values.length > 0) {
                 const tableBody = document.querySelector('#attendance-table tbody');
                 tableBody.innerHTML = ''; // 기존 데이터를 초기화
@@ -313,27 +294,36 @@
                         const tdPreviousData = document.createElement('td'); // 바로 앞 열 데이터를 위한 셀 추가
                         const tdAttendance = document.createElement('td'); // 출결 상태 셀 추가
 
-                        const dateColumnIndex = getDateColumnIndex(selectedDate);
+                        const dateColumnIndexMap = {
+                            '01-13': 6,
+                            '01-14': 8,
+                            '01-15': 10,
+                            '01-16': 12,
+                            '01-17': 14,
+                            '01-18': 16,
+                            '01-19': 18
+                        };
 
-                        if (dateColumnIndex !== undefined) {
-                            const previousIndex = dateColumnIndex - 1; // 바로 앞 열의 인덱스
-
-                            const currentCell = row[dateColumnIndex]; // 선택된 날짜의 출결 상태
+                        if (selectedDate && dateColumnIndexMap[selectedDate] !== undefined) {
+                            const dateIndex = dateColumnIndexMap[selectedDate];
+                            const previousIndex = dateIndex - 1; // 바로 앞 열의 인덱스
+                            
+                            const currentCell = row[dateIndex]; // 선택된 날짜의 출결 상태
                             const previousCell = row[previousIndex]; // 바로 앞 열의 데이터
 
                             // 출결 상태 처리
                             if (currentCell === '1') {
                                 tdAttendance.textContent = '출석';
-                                tdAttendance.classList.add('present'); // 초록색 배경
+                                tdAttendance.classList.add('present'); // 출석일 경우 초록색 배경 추가
                             } else if (currentCell === '3') {
                                 tdAttendance.textContent = '결석';
-                                tdAttendance.classList.add('absent'); // 빨간색 배경
+                                tdAttendance.classList.add('absent'); // 결석일 경우 빨간색 배경 추가
                             } else {
-                                tdAttendance.textContent = ''; // 출결 상태 없을 경우 공란
+                                tdAttendance.textContent = ''; // "정보 없음" 대신 공란으로 표시
                             }
 
                             // 바로 앞 열 데이터 표시 (정보 없음은 공란으로 표시)
-                            tdPreviousData.textContent = previousCell || '';
+                            tdPreviousData.textContent = previousCell || ''; 
                         }
 
                         // 테이블에 셀 추가
@@ -345,11 +335,6 @@
                 });
             }
         }
-
-        // 햄버거 메뉴 처리
-        document.getElementById('hamburger').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-        });
     </script>
 </body>
 </html>
